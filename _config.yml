@@ -65,8 +65,8 @@ nav:
 
 #Author config
 author:
-    name: minixalpha
-    email: xkzbeta@outlook.comment
+    name: z6491679
+    email: 273979550@qq.com
     imageLink: https://avatars.githubusercontent.com/z6491679
     simpleIntro: 我是 z6491679
     detailIntro:
@@ -110,20 +110,20 @@ customLinks:
 #comment config
 disqus:
   config: false
-  id: minixalpha
+  id: z6491679
 
 
 #################################### global configure #######################################
 
-username: minixalpha
+username: z6491679
 baseurl: /StrayBirds
 markdown: redcarpet
 safe: false
 highlighter: pygments
 title: 飞鸟集
 description: 人生到处知何似，应似飞鸿踏雪泥
-theme: kunka
-disqusname: minixalpha
+theme: slate
+disqusname: z6491679
 
 # theme can be: hack, leap-day, merlot, midnight, minimal, modernist, slate, time-machine, kunka
 # those themes are all come from GitHub Pages Themes
