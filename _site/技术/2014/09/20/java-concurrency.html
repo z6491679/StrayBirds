@@ -33,7 +33,7 @@
             body {
                 /*background-color: #326696;*/
                 margin: 0px;
-                overflow: hidden;
+                overflow: auto;
                 font-family: Monospace;
                 font-size: 13px;
                 font-weight: bold;
@@ -340,6 +340,10 @@
             </div>
         </div>
 
+        <div id ="test" class="aa">
+
+        </div>
+
         <script id="vs" type="x-shader/x-vertex">
             varying vec2 vUv;
 
@@ -404,8 +408,9 @@
 
             function init() {
 
-                container = document.createElement('div');
-                document.body.appendChild(container);
+                //container = document.createElement('div');
+                //document.body.appendChild(container);
+                container = document.getElementById("test");
 
                 // Bg gradient
 
