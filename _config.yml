@@ -58,7 +58,7 @@ nav:
     url: navigations/categories.html
   - text: 文章归档
     url: navigations/archives.html
-  - text: contact me
+  - text: Contact Me
     url: navigations/contact.html
   - text: 友情链接
     url: navigations/links.html
