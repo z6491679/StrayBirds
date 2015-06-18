@@ -147,13 +147,13 @@ bool toleft(Point a, Point b, Point k)
 </code>
 <strong>in_triangle:</strong>
 有了toleft（），我们可以进行点是否在多边形内的判断，比如三角形的话，点在内部则3对3边顺时针进行toleft测试要么都在左要么都在右。</p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">bool in_triangle(Point a, Point b, Point c, Point k)
-{
-    bool r1 = toleft(a, b, k);
-    bool r2 = toleft(b, c, k);
-    bool r3 = toleft(c, a, k);
-    return (r1 == r2) &amp;&amp; (r1 == r3);
-}
+<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="kt">bool</span> <span class="nf">in_triangle</span><span class="p">(</span><span class="n">Point</span> <span class="n">a</span><span class="p">,</span> <span class="n">Point</span> <span class="n">b</span><span class="p">,</span> <span class="n">Point</span> <span class="n">c</span><span class="p">,</span> <span class="n">Point</span> <span class="n">k</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">bool</span> <span class="n">r1</span> <span class="o">=</span> <span class="n">toleft</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">k</span><span class="p">);</span>
+    <span class="kt">bool</span> <span class="n">r2</span> <span class="o">=</span> <span class="n">toleft</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">k</span><span class="p">);</span>
+    <span class="kt">bool</span> <span class="n">r3</span> <span class="o">=</span> <span class="n">toleft</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">k</span><span class="p">);</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">r1</span> <span class="o">==</span> <span class="n">r2</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">r1</span> <span class="o">==</span> <span class="n">r3</span><span class="p">);</span>
+<span class="p">}</span>
 </code></pre></div>
 <p>我们进行凸包的计算，算法有多种，从O(n^4) ~ O(nlogn)
 一、EP（extreme point）算法（O（n^4））
@@ -166,86 +166,86 @@ bool toleft(Point a, Point b, Point k)
 <p>二、EE（extreme edge）极边算法（O（n^3））
 极边：图中所有点都在其一侧的边称为极边，可以通过toleft测试判断。步骤：
 1、对图中每一条边，对除构成此边2点的其他点进行toleft测试，如果全为false或者全为true，证明所有点都在其一侧，标记为极边。</p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">//返回extreme edge的个数
-int EE(Point *a, Point *res, int num)
-{
-    int res_count = 0;
-    for (int i = 0; i &lt; num; i++)
-        for (int j = i + 1; j &lt; num; j++)
-        {
-            bool flag;
-            int count = 0,result = 0;
-            for (int k = 0; k &lt; num ; k++)
-            {
-                if (k == i || k == j)
-                    continue;
-                if (count == 0)//第一个点，确定左右
-                {
-                    flag = toleft(a[i], a[j], a[k]);
-                    count++;
-                }
-                else if (flag != toleft(a[i], a[j], a[k]))//有一个点与前面点不同
-                {
-                    result = 1;
-                    break;
-                }
-            }
-            if (result == 0)//证明全部点都在a[i] a[j]边的一边
-            {
-                res[res_count++] = a[i];
-                res[res_count++] = a[j];
-            }
-        }
-    return res_count / 2;
-}
+<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="c1">//返回extreme edge的个数</span>
+<span class="kt">int</span> <span class="nf">EE</span><span class="p">(</span><span class="n">Point</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="n">Point</span> <span class="o">*</span><span class="n">res</span><span class="p">,</span> <span class="kt">int</span> <span class="n">num</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">res_count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">num</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">num</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="kt">bool</span> <span class="n">flag</span><span class="p">;</span>
+            <span class="kt">int</span> <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span><span class="n">result</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="n">num</span> <span class="p">;</span> <span class="n">k</span><span class="o">++</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">k</span> <span class="o">==</span> <span class="n">i</span> <span class="o">||</span> <span class="n">k</span> <span class="o">==</span> <span class="n">j</span><span class="p">)</span>
+                    <span class="k">continue</span><span class="p">;</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span><span class="c1">//第一个点，确定左右</span>
+                <span class="p">{</span>
+                    <span class="n">flag</span> <span class="o">=</span> <span class="n">toleft</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="n">k</span><span class="p">]);</span>
+                    <span class="n">count</span><span class="o">++</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">flag</span> <span class="o">!=</span> <span class="n">toleft</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span><span class="c1">//有一个点与前面点不同</span>
+                <span class="p">{</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+                    <span class="k">break</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">result</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span><span class="c1">//证明全部点都在a[i] a[j]边的一边</span>
+            <span class="p">{</span>
+                <span class="n">res</span><span class="p">[</span><span class="n">res_count</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+                <span class="n">res</span><span class="p">[</span><span class="n">res_count</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="p">];</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="k">return</span> <span class="n">res_count</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+<span class="p">}</span>
 </code></pre></div>
 <p>三、Javis march（O（hn））
 根据EE的想法，我们可以想到一个凸包所有的边都是连着的，那么在找到一条边之后我们可以顺着其中的顶点继续向下找，而不用将所有的边都进行遍历。步骤：
 1. 找到最左下的点LTD-&gt;p<em>now
 2. 从p</em>now出发找到第一条极边FEE，并将另一个顶点赋为p<em>now
 3. 不断重复2步骤，直到p</em>now = LTD，算法结束</p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">//Jarvis Marching
-int JM(Point *a, Point *res, int num)
-{
-    int min_x = INF,min_loc,min_y;
-    //find ltl(最左下) Point to be the first element in stack s
-    for (int i = 0; i &lt; num; i++)
-        if (a[i].x &lt; min_x)
-        {
-            min_x = a[i].x;
-            min_y = a[i].y;
-            min_loc = i;
-        }
-        else if (a[i].x == min_x &amp;&amp; a[i].y &lt; min_y)//横坐标一样，取纵坐标小的那个
-        {
-            min_x = a[i].x;
-            min_y = a[i].y;
-            min_loc = i;
-        }
-    //将p1得到并放到第一个的位置，这样好操作 
-    int flag = min_loc,end = flag;
-    int count = 0;
-    res[count++] = a[min_loc];
-    while (flag != end || count == 1)
-    {
-        int right_most;//为了防止right_most == flag.
-        if (flag == num - 1)
-            right_most = flag - 1;
-        else
-            right_most = flag + 1;
-        for (int i = 0; i &lt; num; i++)//找到a[flag]点最右下的点，那么就是其下一个点，扫一遍即可，一直往toleft的反方向扫
-        {
-            if (i == right_most || i == flag )
-                continue;
-            if (!toleft(a[flag], a[right_most], a[i]))//证明a[i]比a[right_most]还要右下
-                right_most = i;
-        }
-        res[count++] = a[right_most];
-        flag = right_most;
-    }
-    return count;
+<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="c1">//Jarvis Marching</span>
+<span class="kt">int</span> <span class="nf">JM</span><span class="p">(</span><span class="n">Point</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="n">Point</span> <span class="o">*</span><span class="n">res</span><span class="p">,</span> <span class="kt">int</span> <span class="n">num</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">min_x</span> <span class="o">=</span> <span class="n">INF</span><span class="p">,</span><span class="n">min_loc</span><span class="p">,</span><span class="n">min_y</span><span class="p">;</span>
+    <span class="c1">//find ltl(最左下) Point to be the first element in stack s</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">num</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">min_x</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">min_x</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">x</span><span class="p">;</span>
+            <span class="n">min_y</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">y</span><span class="p">;</span>
+            <span class="n">min_loc</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">x</span> <span class="o">==</span> <span class="n">min_x</span> <span class="o">&amp;&amp;</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">y</span> <span class="o">&lt;</span> <span class="n">min_y</span><span class="p">)</span><span class="c1">//横坐标一样，取纵坐标小的那个</span>
+        <span class="p">{</span>
+            <span class="n">min_x</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">x</span><span class="p">;</span>
+            <span class="n">min_y</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">y</span><span class="p">;</span>
+            <span class="n">min_loc</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="c1">//将p1得到并放到第一个的位置，这样好操作 </span>
+    <span class="kt">int</span> <span class="n">flag</span> <span class="o">=</span> <span class="n">min_loc</span><span class="p">,</span><span class="n">end</span> <span class="o">=</span> <span class="n">flag</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">res</span><span class="p">[</span><span class="n">count</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">min_loc</span><span class="p">];</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">flag</span> <span class="o">!=</span> <span class="n">end</span> <span class="o">||</span> <span class="n">count</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">right_most</span><span class="p">;</span><span class="c1">//为了防止right_most == flag.</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">flag</span> <span class="o">==</span> <span class="n">num</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">right_most</span> <span class="o">=</span> <span class="n">flag</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="k">else</span>
+            <span class="n">right_most</span> <span class="o">=</span> <span class="n">flag</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">num</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="c1">//找到a[flag]点最右下的点，那么就是其下一个点，扫一遍即可，一直往toleft的反方向扫</span>
+        <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="n">right_most</span> <span class="o">||</span> <span class="n">i</span> <span class="o">==</span> <span class="n">flag</span> <span class="p">)</span>
+                <span class="k">continue</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">toleft</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">flag</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="n">right_most</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span><span class="c1">//证明a[i]比a[right_most]还要右下</span>
+                <span class="n">right_most</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="n">res</span><span class="p">[</span><span class="n">count</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">right_most</span><span class="p">];</span>
+        <span class="n">flag</span> <span class="o">=</span> <span class="n">right_most</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">count</span><span class="p">;</span>
 
-}
+<span class="p">}</span>
 </code></pre></div>
 <p>算法复杂度为O（hn），其中h为凸包中点的个数，此算法当h很小（即大部分点全在凸包内）的时候可以认为其为O（n），当h很大的时候（如点全部都在凸包上）则为O（n^2）,是一个和最终结果相关的算法。</p>
 
@@ -255,70 +255,70 @@ int JM(Point *a, Point *res, int num)
 2. 将剩余点根据与LTD点的角度大小从小到大排序（一般算tan的值）
 3. 按照排序后的序列每次找到最右边的点（这个通过2个栈+toleft测试来实现）
 <img src="http://img.blog.csdn.net/20150406095548761" alt="这里写图片描述"></p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">int graham_scan(Point *a, Point *res, int num)
-{
-    stack&lt;Point&gt; S;
-    stack&lt;Point&gt; T;
-    float tanp[1000];
-    float min_x = 1000000;
-    float min_y = 1000000;
-    int min_loc = -1;
-    //find ltl(最左下) Point to be the first element in stack s
-    for (int i = 0; i &lt; num; i++)
-        if (a[i].x &lt; min_x)
-        {
-            min_x = a[i].x;
-            min_y = a[i].y;
-            min_loc = i;
-        }
-        else if (a[i].x == min_x &amp;&amp; a[i].y &lt; min_y)//横坐标一样，取纵坐标小的那个
-        {
-            min_x = a[i].x;
-            min_y = a[i].y;
-            min_loc = i;
-        }
-    //将p1得到 
-    First_p = a[min_loc];
-    //将后面元素向前移动，即提取First_p元素 
-    for (int i = min_loc; i &lt; num - 1; i++)
-        a[i] = a[i + 1];
-    num = num - 1;
-    //按照angle来进行排序
-    qsort(a, num, sizeof(Point), cmp);
-    S.push(First_p);
-    S.push(a[0]);
-    for (int i = num - 1; i &gt; 0; i--)
-        T.push(a[i]);
-    while (1)
-    {
-        if (T.empty())
-            break;
-        Point p2 = S.top();
-        S.pop();
-        Point p1 = S.top();
-        S.pop();
-        Point p3 = T.top();
-        T.pop();
-        if (toleft(p1, p2, p3))
-        {
-            S.push(p1);
-            S.push(p2);
-            S.push(p3);
-        }
-        else
-        {
-            S.push(p1);
-            S.push(p3);
-        }
-    }
-    int num_res = S.size();
-    for (int i = 0; i &lt; num_res; i++)
-    {
-        res[i] = S.top();
-        S.pop();
-    }
-    return num_res;
-}
+<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="kt">int</span> <span class="nf">graham_scan</span><span class="p">(</span><span class="n">Point</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="n">Point</span> <span class="o">*</span><span class="n">res</span><span class="p">,</span> <span class="kt">int</span> <span class="n">num</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">stack</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;</span> <span class="n">S</span><span class="p">;</span>
+    <span class="n">stack</span><span class="o">&lt;</span><span class="n">Point</span><span class="o">&gt;</span> <span class="n">T</span><span class="p">;</span>
+    <span class="kt">float</span> <span class="n">tanp</span><span class="p">[</span><span class="mi">1000</span><span class="p">];</span>
+    <span class="kt">float</span> <span class="n">min_x</span> <span class="o">=</span> <span class="mi">1000000</span><span class="p">;</span>
+    <span class="kt">float</span> <span class="n">min_y</span> <span class="o">=</span> <span class="mi">1000000</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">min_loc</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="c1">//find ltl(最左下) Point to be the first element in stack s</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">num</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">min_x</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">min_x</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">x</span><span class="p">;</span>
+            <span class="n">min_y</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">y</span><span class="p">;</span>
+            <span class="n">min_loc</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">x</span> <span class="o">==</span> <span class="n">min_x</span> <span class="o">&amp;&amp;</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">y</span> <span class="o">&lt;</span> <span class="n">min_y</span><span class="p">)</span><span class="c1">//横坐标一样，取纵坐标小的那个</span>
+        <span class="p">{</span>
+            <span class="n">min_x</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">x</span><span class="p">;</span>
+            <span class="n">min_y</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">y</span><span class="p">;</span>
+            <span class="n">min_loc</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="c1">//将p1得到 </span>
+    <span class="n">First_p</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">min_loc</span><span class="p">];</span>
+    <span class="c1">//将后面元素向前移动，即提取First_p元素 </span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">min_loc</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">num</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">];</span>
+    <span class="n">num</span> <span class="o">=</span> <span class="n">num</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="c1">//按照angle来进行排序</span>
+    <span class="n">qsort</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">num</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">Point</span><span class="p">),</span> <span class="n">cmp</span><span class="p">);</span>
+    <span class="n">S</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">First_p</span><span class="p">);</span>
+    <span class="n">S</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">num</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span><span class="o">--</span><span class="p">)</span>
+        <span class="n">T</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+    <span class="k">while</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">T</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="n">Point</span> <span class="n">p2</span> <span class="o">=</span> <span class="n">S</span><span class="p">.</span><span class="n">top</span><span class="p">();</span>
+        <span class="n">S</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+        <span class="n">Point</span> <span class="n">p1</span> <span class="o">=</span> <span class="n">S</span><span class="p">.</span><span class="n">top</span><span class="p">();</span>
+        <span class="n">S</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+        <span class="n">Point</span> <span class="n">p3</span> <span class="o">=</span> <span class="n">T</span><span class="p">.</span><span class="n">top</span><span class="p">();</span>
+        <span class="n">T</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">toleft</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">p3</span><span class="p">))</span>
+        <span class="p">{</span>
+            <span class="n">S</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">p1</span><span class="p">);</span>
+            <span class="n">S</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">p2</span><span class="p">);</span>
+            <span class="n">S</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">p3</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span>
+        <span class="p">{</span>
+            <span class="n">S</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">p1</span><span class="p">);</span>
+            <span class="n">S</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">p3</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="kt">int</span> <span class="n">num_res</span> <span class="o">=</span> <span class="n">S</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">num_res</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">res</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">S</span><span class="p">.</span><span class="n">top</span><span class="p">();</span>
+        <span class="n">S</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">num_res</span><span class="p">;</span>
+<span class="p">}</span>
 </code></pre></div>
 <p>算法复杂度主要集中在排序过程中为O（nlogn）。如果不排序直接乱序进行toleft测试的话，会出问题，比如：
 <img src="http://img.blog.csdn.net/20150406102615521" alt="这里写图片描述">
