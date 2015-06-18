@@ -29,9 +29,11 @@ min[n]： 背景学习过程中每个码元学习到的最小值，在前景分�
 high[n]：背景学习过程中用来调整learnHigh[n]的，如果learnHigh[n]<high[n],则learnHigh[n]缓慢加1
 
 low[n]： 背景学习过程中用来调整learnLow[n]的，如果learnLow[n]>Low[n],则learnLow[缓慢减1
+
 ```
 
 ***数据结构：***
+
 ```c++
 
 typedef struct ce {

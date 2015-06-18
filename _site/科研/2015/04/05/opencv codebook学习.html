@@ -154,47 +154,44 @@
 
 <span class="n">low</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="err">：</span> <span class="err">背景学习过程中用来调整</span><span class="n">learnLow</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="err">的，如果</span><span class="n">learnLow</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">&gt;</span><span class="n">Low</span><span class="p">[</span><span class="n">n</span><span class="p">],</span><span class="err">则</span><span class="n">learnLow</span><span class="p">[</span><span class="err">缓慢减</span><span class="mi">1</span>
 </code></pre></div>
-<p><strong><em>数据结构：</em></strong>
-```c++</p>
+<p><strong><em>数据结构：</em></strong></p>
+<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">ce</span> <span class="p">{</span>
+    <span class="n">uchar</span>   <span class="n">learnHigh</span><span class="p">[</span><span class="n">CHANNELS</span><span class="p">];</span>    <span class="c1">// High side threshold for learning</span>
+    <span class="n">uchar</span>   <span class="n">learnLow</span><span class="p">[</span><span class="n">CHANNELS</span><span class="p">];</span>     <span class="c1">// Low side threshold for learning</span>
+    <span class="n">uchar</span>   <span class="n">max</span><span class="p">[</span><span class="n">CHANNELS</span><span class="p">];</span>          <span class="c1">// 当前码元在学习中遇到的最大像素值</span>
+    <span class="n">uchar</span>   <span class="n">min</span><span class="p">[</span><span class="n">CHANNELS</span><span class="p">];</span>          <span class="c1">// 当前码元在学习中遇到的最小像素值</span>
+    <span class="kt">int</span>     <span class="n">t_last_update</span><span class="p">;</span>          <span class="c1">// This is book keeping to allow us to kill stale entries</span>
+    <span class="kt">int</span>     <span class="n">stale</span><span class="p">;</span>                  <span class="c1">// max negative run (biggest period of inactivity)，记录该码元未被访问的最长时间</span>
+<span class="p">}</span> <span class="n">code_element</span><span class="p">;</span>                     <span class="c1">// 码元的数据结构</span>
 
-<p>typedef struct ce {
-    uchar   learnHigh[CHANNELS];    // High side threshold for learning
-    uchar   learnLow[CHANNELS];     // Low side threshold for learning
-    uchar   max[CHANNELS];          // 当前码元在学习中遇到的最大像素值
-    uchar   min[CHANNELS];          // 当前码元在学习中遇到的最小像素值
-    int     t<em>last</em>update;          // This is book keeping to allow us to kill stale entries
-    int     stale;                  // max negative run (biggest period of inactivity)，记录该码元未被访问的最长时间
-} code_element;                     // 码元的数据结构</p>
+<span class="k">typedef</span> <span class="k">struct</span> <span class="n">code_book</span> <span class="p">{</span>
+    <span class="n">code_element</span>    <span class="o">**</span><span class="n">cb</span><span class="p">;</span>
+    <span class="kt">int</span>             <span class="n">numEntries</span><span class="p">;</span>     <span class="c1">// 此码本中码元的数目</span>
+    <span class="kt">int</span>             <span class="n">t</span><span class="p">;</span>              <span class="c1">// 此码本现在的时间,一帧为一个时间单位</span>
+<span class="p">}</span> <span class="n">codeBook</span><span class="p">;</span>                         <span class="c1">//每个像素点位置有一个码本</span>
+</code></pre></div>
+<p><strong><em>成员初始化：</em></strong></p>
+<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="n">Codebook</span><span class="o">::</span><span class="n">Codebook</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">yuvImage</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span><span class="c1">//原始图像</span>
+    <span class="n">ImaskCodeBook</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+    <span class="n">ImaskCodeBookCC</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+    <span class="n">cB</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+    <span class="n">pColor</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span> <span class="c1">//YUV pointer</span>
+    <span class="n">imageLen</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span><span class="c1">//像素大小</span>
+    <span class="n">nChannels</span> <span class="o">=</span> <span class="n">CHANNELS</span><span class="p">;</span>
 
-<p>typedef struct code<em>book {
-    code</em>element    **cb;
-    int             numEntries;     // 此码本中码元的数目
-    int             t;              // 此码本现在的时间,一帧为一个时间单位
-} codeBook;                         //每个像素点位置有一个码本</p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">***成员初始化：***
+    <span class="n">approxLevel</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span><span class="c1">//</span>
+    <span class="n">closeIter</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="n">maxIterInLearn</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
+    <span class="n">tolerance</span> <span class="o">=</span> <span class="mi">30</span><span class="p">;</span><span class="c1">//进行检测时候的上下波动值</span>
+    <span class="n">perimScale</span> <span class="o">=</span> <span class="mf">7.5</span><span class="p">;</span><span class="c1">//连通域删选的周长倍数阈值</span>
+    <span class="n">isFirstRun</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+    <span class="n">iterInLearn</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="n">isNewFrame</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
 
-```c++
-Codebook::Codebook()
-{
-    yuvImage = NULL;//原始图像
-    ImaskCodeBook = NULL;
-    ImaskCodeBookCC = NULL;
-    cB = NULL;
-    pColor = NULL; //YUV pointer
-    imageLen = 0;//像素大小
-    nChannels = CHANNELS;
-
-    approxLevel = 0;//
-    closeIter = 2;
-    maxIterInLearn = 100;
-    tolerance = 30;//进行检测时候的上下波动值
-    perimScale = 7.5;//连通域删选的周长倍数阈值
-    isFirstRun = true;
-    iterInLearn = 1;
-    isNewFrame = false;
-
-    isShowMask = false;
-}
+    <span class="n">isShowMask</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+<span class="p">}</span>
 </code></pre></div>
 <p><strong><em>主程序</em></strong></p>
 <div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
