@@ -236,39 +236,38 @@
     <span class="k">delete</span> <span class="n">cap</span><span class="p">;</span>
 <span class="p">}</span>
 </code></pre></div>
-<p><strong><em>初始化函数</em></strong>：rawframe即为当前的frame
-``` c++
-int Codebook::initial()
-{
-    if (yuvImage)
-        cvReleaseImage(&amp;yuvImage);
-    if (ImaskCodeBook)
-        cvReleaseImage(&amp;ImaskCodeBook);
-    delete[] cB;</p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">yuvImage = cvCreateImage(cvGetSize(rawImage), 8, 3);
-ImaskCodeBook = cvCreateImage(cvGetSize(rawImage), IPL_DEPTH_8U, 1);
-ImaskCodeBookCC = cvCreateImage(cvGetSize(rawImage), IPL_DEPTH_8U, 1);
+<p><strong><em>初始化函数</em></strong>
+rawframe即为当前的frame</p>
+<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="kt">int</span> <span class="n">Codebook</span><span class="o">::</span><span class="n">initial</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">yuvImage</span><span class="p">)</span>
+        <span class="n">cvReleaseImage</span><span class="p">(</span><span class="o">&amp;</span><span class="n">yuvImage</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">ImaskCodeBook</span><span class="p">)</span>
+        <span class="n">cvReleaseImage</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ImaskCodeBook</span><span class="p">);</span>
+    <span class="k">delete</span><span class="p">[]</span> <span class="n">cB</span><span class="p">;</span>
 
-cvSet(ImaskCodeBook, cvScalar(255));  // 设置单通道数组所有元素为255,即初始化为白色图像
-imageLen = rawImage-&gt;width * rawImage-&gt;height;
-cB = new codeBook[imageLen];  // 得到与图像像素数目长度一样的一组码本,以便对每个像素位置进行处理
+    <span class="n">yuvImage</span> <span class="o">=</span> <span class="n">cvCreateImage</span><span class="p">(</span><span class="n">cvGetSize</span><span class="p">(</span><span class="n">rawImage</span><span class="p">),</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
+    <span class="n">ImaskCodeBook</span> <span class="o">=</span> <span class="n">cvCreateImage</span><span class="p">(</span><span class="n">cvGetSize</span><span class="p">(</span><span class="n">rawImage</span><span class="p">),</span> <span class="n">IPL_DEPTH_8U</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="n">ImaskCodeBookCC</span> <span class="o">=</span> <span class="n">cvCreateImage</span><span class="p">(</span><span class="n">cvGetSize</span><span class="p">(</span><span class="n">rawImage</span><span class="p">),</span> <span class="n">IPL_DEPTH_8U</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
 
-for (int i = 0; i&lt;imageLen; i++)   // 初始化每个码元数目为0
-    cB[i].numEntries = 0;
-for (int i = 0; i&lt;nChannels; i++)
-{
-    cbBounds[i] = 10;   // 像素值邻域,仅在更新学习过程中的上下阈值learnHigh和learnLow时用到。high = *(p + n) + *(cbBounds + n),low = low[n] = *(p + n) - *(cbBounds + n),即当前像素点像素值的正负10之内
-    minMod[i] = tolerance;   // 用于背景差分函数中
-    maxMod[i] = tolerance;   // 调整其值以达到最好的分割
-}
+    <span class="n">cvSet</span><span class="p">(</span><span class="n">ImaskCodeBook</span><span class="p">,</span> <span class="n">cvScalar</span><span class="p">(</span><span class="mi">255</span><span class="p">));</span>  <span class="c1">// 设置单通道数组所有元素为255,即初始化为白色图像</span>
+    <span class="n">imageLen</span> <span class="o">=</span> <span class="n">rawImage</span><span class="o">-&gt;</span><span class="n">width</span> <span class="o">*</span> <span class="n">rawImage</span><span class="o">-&gt;</span><span class="n">height</span><span class="p">;</span>
+    <span class="n">cB</span> <span class="o">=</span> <span class="k">new</span> <span class="n">codeBook</span><span class="p">[</span><span class="n">imageLen</span><span class="p">];</span>  <span class="c1">// 得到与图像像素数目长度一样的一组码本,以便对每个像素位置进行处理</span>
 
-show = cvCreateImage(cvGetSize(rawImage), IPL_DEPTH_8U, 3);
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">imageLen</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>   <span class="c1">// 初始化每个码元数目为0</span>
+        <span class="n">cB</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">numEntries</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">nChannels</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">cbBounds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>   <span class="c1">// 像素值邻域,仅在更新学习过程中的上下阈值learnHigh和learnLow时用到。high = *(p + n) + *(cbBounds + n),low = low[n] = *(p + n) - *(cbBounds + n),即当前像素点像素值的正负10之内</span>
+        <span class="n">minMod</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">tolerance</span><span class="p">;</span>   <span class="c1">// 用于背景差分函数中</span>
+        <span class="n">maxMod</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">tolerance</span><span class="p">;</span>   <span class="c1">// 调整其值以达到最好的分割</span>
+    <span class="p">}</span>
 
-return 1;
+    <span class="n">show</span> <span class="o">=</span> <span class="n">cvCreateImage</span><span class="p">(</span><span class="n">cvGetSize</span><span class="p">(</span><span class="n">rawImage</span><span class="p">),</span> <span class="n">IPL_DEPTH_8U</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
 </code></pre></div>
-<p>}
-``` </p>
-
 <p><strong><em>学习函数：</em></strong></p>
 <div class="highlight"><pre><code class="language-text" data-lang="text">void Codebook::learn(Mat frame)
 {

@@ -128,7 +128,9 @@ int main()
 
 ```
 
-***初始化函数***：rawframe即为当前的frame
+***初始化函数***
+rawframe即为当前的frame
+
 ``` c++
 int Codebook::initial()
 {
