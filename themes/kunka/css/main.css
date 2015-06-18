@@ -428,7 +428,7 @@ a         { color: #91736b; text-decoration: none; }
     padding-bottom: 10px;
 }
 .main .article-year li span {
-    width: 60px;
+    width: 15%;
     text-align: right;
     padding: 0 10px;
     display: block;
@@ -438,7 +438,7 @@ a         { color: #91736b; text-decoration: none; }
     color: #fefefe;
 }
 .main .article-year li a {
-    width: 500px;
+    width: 85%;
     display: block;
     float: left;
     line-height: 32px;
