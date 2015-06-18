@@ -1,0 +1,847 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <!--
+         **
+         * Auther:      掌心
+         * Contact:     http://www.zhanxin.info
+         * Create:      2013.08.10
+         * Theme Name:  Kunka
+         * Authorize:   BY-NC-SA
+         **
+        -->
+        <meta charset="utf-8">
+        <title>opencv codebook学习 - Qilong Tech</title>
+        <!-- meta -->
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <meta name="generator" content="Jekyll" />
+        <meta name="author" content="z6491679" />
+        <meta name="description" content="人生到处知何似，应似飞鸿踏雪泥" />
+        <meta name="keywords" content="" />
+        <!-- atom -->
+        <link rel="alternate" type="application/atom+xml" title="Recent Entries" href="/atom.xml" />
+        <link rel="shortcut icon" href="http://jekyllrb.com/favicon.png" type="image/x-icon" />
+        <!-- font-awesome -->
+        <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+        <link href='http://fonts.googleapis.com/css?family=Spirax' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="/themes/kunka/css/syntax.css">
+        <link rel="stylesheet" href="/themes/kunka/css/main.css">
+
+
+        <link rel="stylesheet" href="http://dreamsky.github.io/main/blog/common/init.css">
+        <style type="text/css">
+            body {
+                /*background-color: #326696;*/
+                margin: 0px;
+                overflow: auto;
+                font-family: Monospace;
+                font-size: 13px;
+                font-weight: bold;
+                text-align: left;
+            }
+
+        </style>
+        <script src="http://dreamsky.github.io/main/blog/common/jquery.min.js"></script>
+
+        <script type="text/javascript" src="/themes/kunka/assets/three.min.js"></script>
+        <script type="text/javascript" src="/themes/kunka/assets/Detector.js"></script>
+
+        
+    </head>
+    <body>
+        <div class="head fn-clear">
+            <div class="header">
+                <h1 class="logo">
+                    <a href="/"><i class="icon-anchor"></i></a>
+                </h1>
+                <nav class="nav">
+                    <ul>
+                        
+                        
+                        
+                        <li class="nav-item ">
+                            <a href="/index.html">
+                                首页
+                            </a>
+                            
+                        </li>
+                        
+                        
+                        
+                        <li class="nav-item ">
+                            <a href="/navigations/categories.html">
+                                分类目录
+                            </a>
+                            
+                        </li>
+                        
+                        
+                        
+                        <li class="nav-item ">
+                            <a href="/navigations/archives.html">
+                                文章归档
+                            </a>
+                            
+                        </li>
+                        
+                        
+                        
+                        <li class="nav-item ">
+                            <a href="/navigations/contact.html">
+                                Contact Me
+                            </a>
+                            
+                        </li>
+                        
+                        
+                        
+                        <li class="nav-item ">
+                            <a href="/navigations/links.html">
+                                友情链接
+                            </a>
+                            
+                        </li>
+                        
+                    </ul>
+                </nav>
+                <div class="follow">
+                    
+                    <a href="/atom.xml" target="_blank"><i class="icon-rss"></i></a>
+                    
+                    <a href="http://weibo.com" target="_blank"><i class="icon-weibo"></i></a>
+                    
+                    <a href="http://renren.com" target="_blank"><i class="icon-renren"></i></a>
+                    
+                    <a href="http://github.com" target="_blank"><i class="icon-github-alt"></i></a>
+                    
+                    <a href="http://twitter.com" target="_blank"><i class="icon-twitter"></i></a>
+                    
+                    <a href="http://google.com" target="_blank"><i class="icon-google-plus"></i></a>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="contain fn-clear">
+            <div class="container fn-clear">
+                <div class="main">
+                    
+    <div class="article article-post">
+    <h2 class="title">opencv codebook学习</h2>
+    <div class="info">
+        <span class="info-title"><i class="icon-calendar"></i> Published: </span>
+        <span class="info-date">05 Apr 2015</span>
+        <span class="info-title"><i class="icon-folder-open"></i> Category: </span>
+        <span class="info-link"><a href="/navigations/categories.html#科研-ref" >科研</a></span>
+    </div>
+    <p>该算法对图像的每一个像素位置建立一个码本(codebook),每一个码本有多个码元（ce）多通道的，每一个码元都有自己的lowbound和upbound。在学习时候，对于每一张图片中的每一个像素，进行相应的码本匹配，如果像素值在码本中某码元的bound范围之内，那么只需要更新该码元的bound即可。如果在对应的码本中没有匹配的码元，那么证明背景是动态的，需要在此像素点的码本中建立新的码元。因此，在背景学习的过程中，每个像素点可以对应多个码元，这样就可以学到复杂的动态背景。
+1、学习过程
+2、检测过程
+```</p>
+
+<p>maxMod[n]：用训练好的背景模型进行前景检测时用到，判断点是否小于max[n] + maxMod[n])。</p>
+
+<p>minMod[n]：用训练好的背景模型进行前景检测时用到，判断点是否小于min[n] -minMod[n])。</p>
+
+<p>cbBounds*：训练背景模型时用到，可以手动输入该参数，这个数主要是配合high[n]和low[n]来用的。</p>
+
+<p>learnHigh[n]：背景学习过程中当一个新像素来时用来判断是否在已有的码元中，是阈值的上界部分。</p>
+
+<p>learnLow[n]：背景学习过程中当一个新像素来时用来判断是否在已有的码元中，是阈值的下界部分。</p>
+
+<p>max[n]： 背景学习过程中每个码元学习到的最大值，在前景分割时配合maxMod[n]用的。</p>
+
+<p>min[n]： 背景学习过程中每个码元学习到的最小值，在前景分割时配合minMod[n]用的。</p>
+
+<p>high[n]：背景学习过程中用来调整learnHigh[n]的，如果learnHigh[n]&lt;high[n],则learnHigh[n]缓慢加1</p>
+
+<p>low[n]： 背景学习过程中用来调整learnLow[n]的，如果learnLow[n]&gt;Low[n],则learnLow[缓慢减1</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">```c++
+
+typedef struct ce {
+    uchar   learnHigh[CHANNELS];    // High side threshold for learning
+    uchar   learnLow[CHANNELS];     // Low side threshold for learning
+    uchar   max[CHANNELS];          // 当前码元在学习中遇到的最大像素值
+    uchar   min[CHANNELS];          // 当前码元在学习中遇到的最小像素值
+    int     t_last_update;          // This is book keeping to allow us to kill stale entries
+    int     stale;                  // max negative run (biggest period of inactivity)，记录该码元未被访问的最长时间
+} code_element;                     // 码元的数据结构
+
+typedef struct code_book {
+    code_element    **cb;
+    int             numEntries;     // 此码本中码元的数目
+    int             t;              // 此码本现在的时间,一帧为一个时间单位
+} codeBook;                         //每个像素点位置有一个码本
+</code></pre></div>
+<p><strong><em>成员初始化：</em></strong></p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">Codebook::Codebook()
+{
+    yuvImage = NULL;//原始图像
+    ImaskCodeBook = NULL;
+    ImaskCodeBookCC = NULL;
+    cB = NULL;
+    pColor = NULL; //YUV pointer
+    imageLen = 0;//像素大小
+    nChannels = CHANNELS;
+
+    approxLevel = 0;//
+    closeIter = 2;
+    maxIterInLearn = 100;
+    tolerance = 30;//进行检测时候的上下波动值
+    perimScale = 7.5;//连通域删选的周长倍数阈值
+    isFirstRun = true;
+    iterInLearn = 1;
+    isNewFrame = false;
+
+    isShowMask = false;
+}
+</code></pre></div>
+<p><strong><em>主程序</em></strong></p>
+<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">Mat</span> <span class="n">img</span><span class="p">;</span>
+    <span class="n">VideoCapture</span> <span class="o">*</span><span class="n">cap</span><span class="p">;</span>
+
+    <span class="n">cap</span> <span class="o">=</span> <span class="k">new</span> <span class="n">VideoCapture</span><span class="p">(</span><span class="s">&quot;...</span><span class="se">\\</span><span class="s">temp_Short.avi&quot;</span><span class="p">);</span>
+
+    <span class="n">Codebook</span> <span class="n">cb</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">key</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="kt">int</span> <span class="n">iter</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="o">*</span><span class="n">cap</span> <span class="o">&gt;&gt;</span> <span class="n">img</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">img</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="n">waitKey</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">key</span> <span class="o">==</span> <span class="sc">&#39;s&#39;</span><span class="p">)</span>   <span class="c1">//暂停</span>
+        <span class="p">{</span>
+            <span class="k">while</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">waitKey</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="sc">&#39;r&#39;</span><span class="p">)</span>
+                    <span class="k">break</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">iter</span> <span class="o">&lt;</span> <span class="mi">100</span><span class="p">)</span><span class="c1">//此为训练张数</span>
+        <span class="p">{</span>
+            <span class="n">cb</span><span class="p">.</span><span class="n">learn</span><span class="p">(</span><span class="n">img</span><span class="p">);</span><span class="c1">//进行训练</span>
+        <span class="p">}</span>
+        <span class="k">else</span>
+        <span class="p">{</span>
+            <span class="n">imshow</span><span class="p">(</span><span class="s">&quot;mask&quot;</span><span class="p">,</span> <span class="n">cb</span><span class="p">.</span><span class="n">process</span><span class="p">(</span><span class="n">img</span><span class="p">));</span>
+        <span class="p">}</span>
+        <span class="n">iter</span><span class="o">++</span><span class="p">;</span>
+        <span class="n">imshow</span><span class="p">(</span><span class="s">&quot;show&quot;</span><span class="p">,</span> <span class="n">img</span><span class="p">);</span>
+
+        <span class="n">waitKey</span><span class="p">(</span><span class="mi">32</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">delete</span> <span class="n">cap</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><strong><em>初始化函数</em></strong>：rawframe即为当前的frame
+``` c++
+int Codebook::initial()
+{
+    if (yuvImage)
+        cvReleaseImage(&amp;yuvImage);
+    if (ImaskCodeBook)
+        cvReleaseImage(&amp;ImaskCodeBook);
+    delete[] cB;</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">yuvImage = cvCreateImage(cvGetSize(rawImage), 8, 3);
+ImaskCodeBook = cvCreateImage(cvGetSize(rawImage), IPL_DEPTH_8U, 1);
+ImaskCodeBookCC = cvCreateImage(cvGetSize(rawImage), IPL_DEPTH_8U, 1);
+
+cvSet(ImaskCodeBook, cvScalar(255));  // 设置单通道数组所有元素为255,即初始化为白色图像
+imageLen = rawImage-&gt;width * rawImage-&gt;height;
+cB = new codeBook[imageLen];  // 得到与图像像素数目长度一样的一组码本,以便对每个像素位置进行处理
+
+for (int i = 0; i&lt;imageLen; i++)   // 初始化每个码元数目为0
+    cB[i].numEntries = 0;
+for (int i = 0; i&lt;nChannels; i++)
+{
+    cbBounds[i] = 10;   // 像素值邻域,仅在更新学习过程中的上下阈值learnHigh和learnLow时用到。high = *(p + n) + *(cbBounds + n),low = low[n] = *(p + n) - *(cbBounds + n),即当前像素点像素值的正负10之内
+    minMod[i] = tolerance;   // 用于背景差分函数中
+    maxMod[i] = tolerance;   // 调整其值以达到最好的分割
+}
+
+show = cvCreateImage(cvGetSize(rawImage), IPL_DEPTH_8U, 3);
+
+return 1;
+</code></pre></div>
+<p>}
+``` </p>
+
+<p><strong><em>学习函数：</em></strong></p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">void Codebook::learn(Mat frame)
+{
+    if (isFirstRun)
+    {
+        rawImage = cvCreateImage(cvSize(frame.cols, frame.rows), IPL_DEPTH_8U, 3);
+        *rawImage = frame;
+        initial();//初始化将所有成员变量进行初始
+        isFirstRun = false;
+    }
+    if (iterInLearn &lt; maxIterInLearn)  //进行背景学习
+    {
+        *rawImage = frame;
+        cvCvtColor(rawImage, yuvImage, CV_BGR2YCrCb);
+        pColor = (uchar *)(yuvImage-&gt;imageData);
+        for (int c = 0; c&lt;imageLen; c++)
+        {
+            cvupdateCodeBook(pColor, cB[c], cbBounds, nChannels);//对每一个码本进行训练
+            pColor += 3;
+        }
+    }
+    else if (iterInLearn == maxIterInLearn)//训练完成，进行codebook的精简，删除长时间未访问的码元
+    {
+        for (int c = 0; c&lt;imageLen; c++)//需要对每一个码本进行操作
+            cvclearStaleEntries(cB[c]);
+    }
+    iterInLearn++;
+}
+</code></pre></div>
+<p><strong><em>学习过程cvupdateCodeBook（）</em></strong></p>
+
+<p>如果当前像素值（x = （*p））在codebook中找到一个码元cb[i],使得每一通道x的值都在cb[i]的[learnLow[n] , learnHigh[n]]区间，那么就不用增加码元，需检查当前的像素值是否为match的码元的最大值或者最小值，并进行更新，此外还要对learnLow[n] , learnHigh[n]也进行缓慢的调整：</p>
+
+<p>检查是否有匹配码元：
+<code>
+int matchChannel;
+    int i;
+    for (i = 0; i&lt;c.numEntries; i++)
+    {
+        matchChannel = 0;
+        for (n = 0; n&lt;numChannels; n++)
+        {
+            if ((c.cb[i]-&gt;learnLow[n] &lt;= *(p + n)) &amp;&amp; (*(p + n) &lt;= c.cb[i]-&gt;learnHigh[n])) //Found an entry for this channel
+            {
+                matchChannel++;
+            }
+        }
+        if (matchChannel == numChannels)        // If an entry was found over all channels
+        {
+            c.cb[i]-&gt;t_last_update = c.t;
+            // adjust this codeword for the first channel
+            for (n = 0; n&lt;numChannels; n++)
+            {
+                if (c.cb[i]-&gt;max[n] &lt; *(p + n))
+                    c.cb[i]-&gt;max[n] = *(p + n);
+                else if (c.cb[i]-&gt;min[n] &gt; *(p + n))
+                    c.cb[i]-&gt;min[n] = *(p + n);
+            }
+            break;
+        }
+    }
+</code>
+如果找到匹配码元，即每个通道的值都在范围内
+<code>
+        if (matchChannel == numChannels)        // If an entry was found over all channels
+        {
+            c.cb[i]-&gt;t_last_update = c.t;
+            // adjust this codeword for the first channel
+            for (n = 0; n&lt;numChannels; n++)
+            {
+                if (c.cb[i]-&gt;max[n] &lt; *(p + n))
+                    c.cb[i]-&gt;max[n] = *(p + n);
+                else if (c.cb[i]-&gt;min[n] &gt; *(p + n))
+                    c.cb[i]-&gt;min[n] = *(p + n);
+            }
+            break;
+        }
+</code>
+缓慢调整的规则：比较 x像素值cvbounds领域与learnLow[n] , learnHigh[n]的大小。如果learnLow[n] &gt; x - cvbounds，那么 learnLow- -；
+<code>
+    // SLOWLY ADJUST LEARNING BOUNDS
+    for (n = 0; n&lt;numChannels; n++)
+        //如果像素通道数据在高低阀值范围内,但在码元阀值之外,则缓慢调整此码元学习界限
+        //也就是像素命中码元了（若没有命中就会新建，就learnHigh[n] == high[n]）
+        //要命中，而且码元的阈值不是特别大（与像素值的差不足cvBounds）时就扩大码元学习限
+    {
+        if (c.cb[i]-&gt;learnHigh[n] &lt; high[n])
+            c.cb[i]-&gt;learnHigh[n] += 1;
+        if (c.cb[i]-&gt;learnLow[n] &gt; low[n])
+            c.cb[i]-&gt;learnLow[n] -= 1;
+    }
+</code></p>
+
+<p>如果当前没有匹配的码元，那么需要给此像素的码本增加新的码元：</p>
+<div class="highlight"><pre><code class="language-c++" data-lang="c++">        <span class="n">learnHigh</span><span class="p">[</span><span class="n">CHANNELS</span><span class="p">]</span> <span class="o">=</span> <span class="o">*</span><span class="p">(</span><span class="n">p</span> <span class="o">+</span> <span class="n">n</span><span class="p">)</span> <span class="o">+</span> <span class="o">*</span><span class="p">(</span><span class="n">cbBounds</span> <span class="o">+</span> <span class="n">n</span><span class="p">)</span><span class="err">；</span><span class="c1">//当前像素值+cbBounds </span>
+        <span class="n">learnLow</span><span class="p">[</span><span class="n">CHANNELS</span><span class="p">]</span> <span class="o">=</span> <span class="o">*</span><span class="p">(</span><span class="n">p</span> <span class="o">+</span> <span class="n">n</span><span class="p">)</span> <span class="o">-</span> <span class="o">*</span><span class="p">(</span><span class="n">cbBounds</span> <span class="o">+</span> <span class="n">n</span><span class="p">);</span><span class="c1">//当前像素值-cbBounds     </span>
+        <span class="n">max</span><span class="p">[</span><span class="n">CHANNELS</span><span class="p">]</span>  <span class="o">=</span>     <span class="o">*</span><span class="p">(</span><span class="n">p</span> <span class="o">+</span> <span class="n">n</span><span class="p">)</span>  
+        <span class="n">min</span><span class="p">[</span><span class="n">CHANNELS</span><span class="p">]</span>  <span class="o">=</span>     <span class="o">*</span><span class="p">(</span><span class="n">p</span> <span class="o">+</span> <span class="n">n</span><span class="p">)</span> 
+        <span class="n">t_last_update</span>  <span class="o">=</span>     <span class="n">c</span><span class="p">.</span><span class="n">t</span>                        <span class="c1">//当前时间</span>
+</code></pre></div>
+<p>然后需要进行码元的回收判断，当一个码元在训练的时候长期没有被访问到（stale为最长不访问的时间），那么证明该码元已经不适用，那么我们可以把它删掉，以减少内存消耗。更新最长未访问时间：</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">    for (int s = 0; s&lt;c.numEntries; s++)
+    {
+        // This garbage is to track which codebook entries are going stale
+        int negRun = c.t - c.cb[s]-&gt;t_last_update;
+
+        if (c.cb[s]-&gt;stale &lt; negRun)
+            c.cb[s]-&gt;stale = negRun;
+    }
+</code></pre></div>
+<p>ps：《学习opencv》给的代码中cvupdateCodeBook()有问题：原来给的是unsigned int，应该改为int。</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">&#39;unsigned&#39; int high[3], low[3];//应该是int 不是unsigned int，不然如果有0、0、0那么low不会小于0！！
+for (n = 0; n&lt;numChannels; n++)
+{
+    high[n] = *(p + n) + *(cbBounds + n);
+    if (high[n] &gt; 255) high[n] = 255;
+    low[n] = *(p + n) - *(cbBounds + n);
+    if (low[n] &lt; 0) low[n] = 0;
+}
+</code></pre></div>
+<p><strong><em>删除长期未访问的码元</em></strong>
+此操作只在背景学习结束后马上执行，且仅执行一次。
+其中认为outdate的时间阈值为学习总时间的一半： &#39;staleThresh = c.t &gt;&gt; 1&#39;</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">int Codebook::cvclearStaleEntries(codeBook &amp;c)//返回删除的码元个数
+{
+    int staleThresh = c.t &gt;&gt; 1;
+    int *keep = new int[c.numEntries];//标记码元是否有效
+    int keepCnt = 0;//记录有效码元个数
+    //筛选未访问时间没有超过staleThresh的码元
+    for (int i = 0; i&lt;c.numEntries; i++)
+    {
+        if (c.cb[i]-&gt;stale &gt; staleThresh)
+            keep[i] = 0;
+        else
+        {
+            keep[i] = 1;
+            keepCnt += 1;
+        }
+    }
+
+    c.t = 0;
+
+    //将未过期的码元建立成新的码本
+    code_element **foo = new code_element*[keepCnt];
+
+    int k = 0;
+    for (int ii = 0; ii&lt;c.numEntries; ii++)
+    {
+        if (keep[ii])
+        {
+            foo[k] = c.cb[ii];
+            foo[k]-&gt;stale = 0;       //We have to refresh these entries for next clearStale
+            foo[k]-&gt;t_last_update = 0;
+            k++;
+        }
+    }
+    delete[] keep;
+    delete[] c.cb;
+    c.cb = foo;//将新码本代替原来的码本
+    int numCleared = c.numEntries - keepCnt;
+    c.numEntries = keepCnt;
+    return(numCleared);
+}
+</code></pre></div>
+<p><strong><em>前背景检测</em></strong>
+和学习时候对码元是否已经存在类似，规则如下：
+对于检测图片，扫描每个像素，当前像素值x在当前码本中找到一个码元，使得x属于当前码元的[min[n] - minMod[n],max[n] + maxMod[n]],那么认为是背景，否则为前景。</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">for (int c = 0; c&lt;imageLen; c++)
+    {
+        maskPixelCodeBook = cvbackgroundDiff(pColor, cB[c], nChannels, minMod, maxMod);
+        *pMask++ = maskPixelCodeBook;
+        pColor += 3;
+    }
+</code></pre></div><div class="highlight"><pre><code class="language-text" data-lang="text">uchar Codebook::cvbackgroundDiff(uchar *p, codeBook &amp;c, int numChannels, int *minMod, int *maxMod)
+{
+    int matchChannel;
+    //SEE IF THIS FITS AN EXISTING CODEWORD
+    int i;
+    for (i = 0; i&lt;c.numEntries; i++)
+    {
+        matchChannel = 0;
+        for (int n = 0; n&lt;numChannels; n++)
+        {
+            if ((c.cb[i]-&gt;min[n] - minMod[n] &lt;= *(p + n)) &amp;&amp; (*(p + n) &lt;= c.cb[i]-&gt;max[n] + maxMod[n]))
+                matchChannel++; //Found an entry for this channel
+            else
+                break;
+        }
+        if (matchChannel == numChannels)
+            break; //Found an entry that matched all channels
+    }
+    if (i == c.numEntries)
+        // p像素各通道值满足码本中其中一个码元,则返回白色
+        return(255);
+
+    return(0);
+}
+</code></pre></div>
+<p><strong>在检测的过程中我们也可以持续的更新codebook，即延时nGapFrame帧然后用其进行训练，并且在训练部分后进行codebook冗余的删除，这样对于运动的检测会更加准确。</strong></p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">//动态更新背景,延时nGapFrame帧
+if (StartUpdate)
+{
+    IplImage *temp = cvCreateImage(cvSize(frame.cols, frame.rows), IPL_DEPTH_8U, 3);;
+    *temp = gapFrameSet.front();
+    cvCvtColor(temp, temp, CV_BGR2YCrCb);
+    pColor = (uchar *)(temp-&gt;imageData);
+    for (int c = 0; c &lt; imageLen; c++)
+    {
+        cvupdateCodeBook(pColor, cB[c], cbBounds, nChannels);//对每一个码本进行训练
+        pColor += 3;
+    }
+    gapFrameSet.erase(gapFrameSet.begin());
+}
+
+//每经过100帧动态进行码本的删除冗余
+if (iterInTest % nGapFrame == 0)
+{
+    for (int c = 0; c &lt; imageLen; c++)
+        cvclearStaleEntries(cB[c]);
+}
+gapFrameSet.push_back(frame.clone());
+
+//间隔nGapFrame帧后开始进行背景的动态更新
+if (iterInTest % nGapFrame == 0)
+{
+    if (StartUpdate == false)
+        StartUpdate = true;
+    else
+        StartUpdate = false;
+}
+</code></pre></div>
+<p><strong><em>提取运动物体</em></strong>
+通过寻找连通域并且进行形态学的处理来提取运动物体：</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">Mat Codebook::cvconnectedComponents(IplImage *mask, int poly1_hull0, float perimScale,Mat frame)
+{
+    static CvMemStorage*    mem_storage = NULL;
+    static CvSeq*           contours = NULL;
+
+    cvMorphologyEx(mask, mask, NULL, NULL, CV_MOP_OPEN, closeIter);
+    // 开运算先腐蚀在膨胀,腐蚀可以清除噪点,膨胀可以修复裂缝
+    cvMorphologyEx(mask, mask, NULL, NULL, CV_MOP_CLOSE, closeIter);
+    // 闭运算先膨胀后腐蚀,之所以在开运算之后,因为噪点膨胀后再腐蚀,是不可能去除的
+
+    if (mem_storage == NULL)
+        mem_storage = cvCreateMemStorage(0);
+    else cvClearMemStorage(mem_storage);
+
+    CvContourScanner scanner = cvStartFindContours(mask, mem_storage,
+        sizeof(CvContour), CV_RETR_EXTERNAL);
+
+    CvSeq* c;
+    int numCont = 0;
+
+
+
+    while ((c = cvFindNextContour(scanner)) != NULL)
+    {
+        double len = cvContourPerimeter(c);
+        // 计算轮廓周长
+        double q = (mask-&gt;height + mask-&gt;width) / perimScale;
+
+        if (len &lt; q)
+            cvSubstituteContour(scanner, NULL);//由于周长过小，删除当前的这一连通域
+        else
+        {
+            CvSeq* c_new;
+            if (poly1_hull0)
+                c_new = cvApproxPoly(c, sizeof(CvContour), mem_storage,
+                CV_POLY_APPROX_DP, approxLevel);//使用多边形逼近轮廓
+            else
+                c_new = cvConvexHull2(c, mem_storage, CV_CLOCKWISE, 1);
+
+            cvSubstituteContour(scanner, c_new);
+            numCont++;
+        }
+    }
+
+
+    contours = cvEndFindContours(&amp;scanner);
+
+    cvZero(mask);
+
+    for (c = contours; c != NULL; c = c-&gt;h_next)
+        cvDrawContours(mask, c, CV_CVX_WHITE, CV_CVX_BLACK, -1, CV_FILLED, 8);
+}
+</code></pre></div>
+    <nav class="article-previous fn-clear">
+        
+        <a class="prev" href="/%E6%8A%80%E6%9C%AF/2014/09/20/java-concurrency.html" rel="bookmark">&laquo;&nbsp;Java 中的并发</a>
+        
+        
+        <a class="next" href="/%E7%A7%91%E7%A0%94/2015/04/05/sort%E7%AE%80%E5%8D%95%E5%88%86%E6%9E%90.html" rel="bookmark">sort简单分析&nbsp;&raquo;</a>
+        
+    </nav>
+    <div class="comment">
+        
+            
+        
+    </div>
+</div>
+
+
+                    
+                        <div id="disqus_thread"></div>
+ <script type="text/javascript">
+     /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+     var disqus_shortname = 'z6491679'; // required: replace example with your forum shortname
+
+     /* * * DON'T EDIT BELOW THIS LINE * * */
+     (function() {
+         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+         dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+         (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+     })();
+ </script>
+ <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    
+
+                    
+                </div>
+                <div class="aside">
+                    <div class="aside-contact">
+                        <h4 class="title">About me</h4>
+                        <div class="det fn-clear">
+                            <div class="det-image">
+                                <img src="https://avatars.githubusercontent.com/z6491679" />
+                            </div>
+                            <div class="det-text">
+                                <p>I am Zhang Qilong</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="aside-item">
+                        <h4 class="title">Recent Posts</h4>
+                        <ul class="list">
+                            
+                                <li><a href="/%E7%A7%91%E7%A0%94/2015/06/17/possion.html" title="Poisson Image Editing" rel="bookmark">Poisson Image Editing</a></li>
+                            
+                                <li><a href="/%E7%A7%91%E7%A0%94/2015/06/09/FLOYD%E7%AE%97%E6%B3%95.html" title="FLOYD算法" rel="bookmark">FLOYD算法</a></li>
+                            
+                                <li><a href="/%E7%A7%91%E7%A0%94/2015/05/13/c++%20matlab%E6%B7%B7%E5%90%88%E7%BC%96%E7%A8%8B%E6%97%B6mxArray%20%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2%E9%97%AE%E9%A2%98.html" title="c++ matlab混合编程时mxArray 内存泄露问题" rel="bookmark">c++ matlab混合编程时mxArray 内存泄露问题</a></li>
+                            
+                                <li><a href="/%E7%AE%97%E6%B3%95/2015/05/13/Vertex%20cover%20problem%EF%BC%88NP%EF%BC%89%E7%AE%97%E6%B3%95%E6%98%AF%E5%A4%9A%E9%A1%B9%E5%BC%8F%E7%9A%84%EF%BC%9F.html" title="Vertex cover problem（NP）算法是多项式的？" rel="bookmark">Vertex cover problem（NP）算法是多项式的？</a></li>
+                            
+                                <li><a href="/%E7%94%9F%E6%B4%BB/2015/05/10/life.html" title="飞鸟集" rel="bookmark">飞鸟集</a></li>
+                            
+                                <li><a href="/%E7%A7%91%E7%A0%94/2015/05/07/Matlab%E7%9A%84%E7%9F%A9%E9%98%B5%E5%AD%98%E5%82%A8%E5%92%8Copencv%20mat%E7%9A%84%E5%8C%BA%E5%88%AB.html" title="Matlab的矩阵存储和opencv mat的区别" rel="bookmark">Matlab的矩阵存储和opencv mat的区别</a></li>
+                            
+                        </ul>
+                    </div>
+
+                    <div class="aside-item">
+                        <h4 class="title">Links</h4>
+                        <ul class="list">
+                            
+                                
+                                    
+                                    <li><a href="http://www.zhanxin.info" title="掌心" target="_blank">掌心</a></li>
+                                    
+                                    <li><a href="http://jekyllrb.com" title="Jekyll" target="_blank">Jekyll</a></li>
+                                    
+                                    <li><a href="http://www.zhanxin.info/themes.html" title="Jekyll Theme" target="_blank">Jekyll Theme</a></li>
+                                    
+                                
+                            
+                                
+                            
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="foot">
+            <div class="footer">
+                <p>Copyright 2013. All rights reserved. Powered by <a href="http://jekyllrb.com" target="_blank">Jekyll</a>, Design by <a href="http://www.zhanxin.info" target="_blank">zhanxin.info</a>.</p>
+            </div>
+        </div>
+
+        <div id ="test" class="aa">
+
+        </div>
+
+        <script id="vs" type="x-shader/x-vertex">
+            varying vec2 vUv;
+
+            void main() {
+
+            vUv = uv;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+
+            }
+
+        </script>
+        <script id="fs" type="x-shader/x-fragment">
+            uniform sampler2D map;
+
+            uniform vec3 fogColor;
+            uniform float fogNear;
+            uniform float fogFar;
+
+            varying vec2 vUv;
+
+            void main() {
+
+            float depth = gl_FragCoord.z / gl_FragCoord.w;
+            float fogFactor = smoothstep( fogNear, fogFar, depth );
+
+            gl_FragColor = texture2D( map, vUv );
+            gl_FragColor.w *= pow( gl_FragCoord.z, 20.0 );
+            gl_FragColor = mix( gl_FragColor, vec4( fogColor, gl_FragColor.w ), fogFactor );
+
+            }
+
+        </script>
+        <script type="text/javascript">
+
+            if (!Detector.webgl) Detector.addGetWebGLMessage();
+
+            var container;
+            var camera, scene, renderer;
+            var mesh, geometry, material;
+
+            var mouseX = 0, mouseY = 0;
+            var start_time = Date.now();
+
+            var windowHalfX = window.innerWidth / 2;
+            var windowHalfY = window.innerHeight / 2;
+
+            init();
+
+            function getRootPath_web() {
+                //获取当前网址，如： http://localhost:8083/uimcardprj/share/meun.jsp
+                var curWwwPath = window.document.location.href;
+                //获取主机地址之后的目录，如： uimcardprj/share/meun.jsp
+                var pathName = window.document.location.pathname;
+                var pos = curWwwPath.indexOf(pathName);
+                //获取主机地址，如： http://localhost:8083
+                var localhostPaht = curWwwPath.substring(0, pos);
+                //获取带"/"的项目名，如：/uimcardprj
+                var projectName = pathName.substring(0, pathName.substr(1).indexOf('/') + 1);
+                return (localhostPaht);
+            }
+
+
+            function init() {
+
+                //container = document.createElement('div');
+                //document.body.appendChild(container);
+                container = document.getElementById("test");
+
+                // Bg gradient
+
+                var canvas = document.createElement('canvas');
+                canvas.width = 32;
+                canvas.height = window.innerHeight;
+
+                var context = canvas.getContext('2d');
+
+                var gradient = context.createLinearGradient(0, 0, 0, canvas.height);
+                gradient.addColorStop(0, "#1e4877");
+                gradient.addColorStop(0.5, "#4584b4");
+
+                context.fillStyle = gradient;
+                context.fillRect(0, 0, canvas.width, canvas.height);
+
+                container.style.background = 'url(' + canvas.toDataURL('image/png') + ')';
+                container.style.backgroundSize = '32px 100%';
+
+                //
+
+                camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 1, 3000);
+                camera.position.z = 6000;
+
+                scene = new THREE.Scene();
+
+                geometry = new THREE.Geometry();
+
+                var image_path = getRootPath_web() + '/themes/kunka/cloud10.png';
+
+                var texture = THREE.ImageUtils.loadTexture(image_path, null, animate);
+      
+
+                texture.magFilter = THREE.LinearMipMapLinearFilter;
+                texture.minFilter = THREE.LinearMipMapLinearFilter;
+
+                var fog = new THREE.Fog(0x4584b4, -100, 3000);
+
+                material = new THREE.ShaderMaterial({
+
+                    uniforms: {
+
+                        "map": { type: "t", value: texture },
+                        "fogColor": { type: "c", value: fog.color },
+                        "fogNear": { type: "f", value: fog.near },
+                        "fogFar": { type: "f", value: fog.far },
+
+                    },
+                    vertexShader: document.getElementById('vs').textContent,
+                    fragmentShader: document.getElementById('fs').textContent,
+                    depthWrite: false,
+                    depthTest: false,
+                    transparent: true
+
+                });
+
+                var plane = new THREE.Mesh(new THREE.PlaneGeometry(64, 64));
+
+                for (var i = 0; i < 8000; i++) {
+
+                    plane.position.x = Math.random() * 1000 - 500;
+                    plane.position.y = -Math.random() * Math.random() * 200 - 15;
+                    plane.position.z = i;
+                    plane.rotation.z = Math.random() * Math.PI;
+                    plane.scale.x = plane.scale.y = Math.random() * Math.random() * 1.5 + 0.5;
+
+                    THREE.GeometryUtils.merge(geometry, plane);
+
+                }
+
+                mesh = new THREE.Mesh(geometry, material);
+                scene.add(mesh);
+
+                mesh = new THREE.Mesh(geometry, material);
+                mesh.position.z = -8000;
+                scene.add(mesh);
+
+                renderer = new THREE.WebGLRenderer({ antialias: false });
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                container.appendChild(renderer.domElement);
+
+                document.addEventListener('mousemove', onDocumentMouseMove, false);
+                window.addEventListener('resize', onWindowResize, false);
+
+            }
+
+            function onDocumentMouseMove(event) {
+
+                mouseX = (event.clientX - windowHalfX) * 0.25;
+                mouseY = (event.clientY - windowHalfY) * 0.15;
+
+            }
+
+            function onWindowResize(event) {
+
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+
+                renderer.setSize(window.innerWidth, window.innerHeight);
+
+            }
+
+            function animate() {
+
+                requestAnimationFrame(animate);
+
+                position = ((Date.now() - start_time) * 0.03) % 8000;
+
+                camera.position.x += (mouseX - camera.position.x) * 0.01;
+                camera.position.y += (-mouseY - camera.position.y) * 0.01;
+                camera.position.z = -position + 8000;
+
+                renderer.render(scene, camera);
+
+            }
+
+        </script>
+
+        <script type="text/javascript" src="https://lib.sinaapp.com/js/jquery/1.8.3/jquery.min.js"></script>
+        
+    </body>
+</html>

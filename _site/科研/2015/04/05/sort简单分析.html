@@ -11,7 +11,7 @@
          **
         -->
         <meta charset="utf-8">
-        <title>Java 中的并发 - Qilong Tech</title>
+        <title>sort简单分析 - Qilong Tech</title>
         <!-- meta -->
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
         <meta name="generator" content="Jekyll" />
@@ -126,136 +126,357 @@
                 <div class="main">
                     
     <div class="article article-post">
-    <h2 class="title">Java 中的并发</h2>
+    <h2 class="title">sort简单分析</h2>
     <div class="info">
         <span class="info-title"><i class="icon-calendar"></i> Published: </span>
-        <span class="info-date">20 Sep 2014</span>
+        <span class="info-date">05 Apr 2015</span>
         <span class="info-title"><i class="icon-folder-open"></i> Category: </span>
-        <span class="info-link"><a href="/navigations/categories.html#技术-ref" >技术</a></span>
+        <span class="info-link"><a href="/navigations/categories.html#科研-ref" >科研</a></span>
     </div>
-    <h2>如何创建一个线程</h2>
+    <p>排序算法分析（都以从小到大为例）：
+1、<strong>Insertsort:</strong>（原地排序）
+最坏情况：从大到小排列（逆序），6,5,4,3,2,1, 比较（移动次数要乘以3）次数=n*(n - 1) / 2;
+最好情况:从小到大排列（正序），1,2,3,4,5,6，比较次数 = n；
+平均情况：与最坏情况一样，为Θ（n^2）.
+算法稳定。</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">void insertsort(unsigned long *a,int num,unsigned long *res)
+{
+    unsigned long temp[num];
+    temp[0] = a[0];
+    //每次取一个数 插入temp数组中 
+    for(int i = 1; i &lt; num; i++)
+        for(int j = i - 1; j &gt;= 0; j--)
+        {
+            if(a[i] &lt; temp[j])
+            {
+                temp[j + 1] = temp[j];
+                if(j == 0)
+                    temp[j] = a[i];
+            }
+            else
+            {
+                temp[j + 1] = a[i];
+                break;
+            }
+        }
+    for(int i = 0; i &lt; num; i++)
+        res[i] = temp[i];
+}
 
-<p>按 Java 语言规范中的说法，创建线程只有一种方式，就是创建一个 Thread 对象。而从 HotSpot 虚拟机的角度看，创建一个虚拟机线程
-有两种方式，一种是创建 Thread 对象，另一种是创建 一个本地线程，加入到虚拟机线程中。</p>
-
-<p>如果从 Java 语法的角度。有两种方法。</p>
-
-<p>第一是继承 Thread 类，实现 run 方法，并创建子类对象。</p>
-<div class="highlight"><pre><code class="language-java" data-lang="java">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">startThreadUseSubClass</span><span class="o">()</span> <span class="o">{</span>
-        <span class="kd">class</span> <span class="nc">MyThread</span> <span class="kd">extends</span> <span class="n">Thread</span> <span class="o">{</span>
-            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">()</span> <span class="o">{</span>
-                <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;start thread using Subclass of Thread&quot;</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-
-        <span class="n">MyThread</span> <span class="n">thread</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">MyThread</span><span class="o">();</span>
-        <span class="n">thread</span><span class="o">.</span><span class="na">start</span><span class="o">();</span>
-    <span class="o">}</span>
+//原地排序版本
+void insertsort1(unsigned long *a,int num)
+{
+    unsigned long key;
+    //每次取一个数 插入temp数组中 
+    for(int i = 1; i &lt; num; i++)
+    {
+        key = a[i];
+        for(int j = i - 1; j &gt;= 0; j--)
+        {
+            if(key &lt; a[j])
+            {
+                a[j + 1] = a[j];
+                if(j == 0)
+                    a[j] = key;
+            }
+            else
+            {
+                a[j + 1] = key;
+                break;
+            }
+        }
+    }
+}
 </code></pre></div>
-<p>另一种是传递给 Thread 构造函数一个 Runnable 对象。</p>
-<div class="highlight"><pre><code class="language-java" data-lang="java">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">startThreadUseRunnalbe</span><span class="o">()</span> <span class="o">{</span>
-        <span class="n">Thread</span> <span class="n">thread</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">Thread</span><span class="o">(</span><span class="k">new</span> <span class="nf">Runnable</span><span class="o">()</span> <span class="o">{</span>
-            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">()</span> <span class="o">{</span>
-                <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;start thread using runnable&quot;</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">});</span>
-        <span class="n">thread</span><span class="o">.</span><span class="na">start</span><span class="o">();</span>
-    <span class="o">}</span>
+<p><strong>2、Shellsort：（分组的插入排序）</strong>
+开始无序的时候每组元素较少，最后差不多有序的时候元素才多起来，所以效果比插入排序要好。
+算法不稳定 14336，步长开始取2，则33会换。</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">void shellsort(unsigned long *a,int num)
+{
+    int step = num / 3;
+    unsigned long temp;
+    //每次插入排序的间隔步长 
+    for(int i = step; i &gt;= 1; i /= 2)
+    //插入排序
+        for(int j = 0; j  &lt; i; j++) 
+        //将每隔i的数分为一组，并进行每组的插入排序 
+            for(int k = j + i; k &lt;= num - 1; k += i)
+            {
+                temp = a[k];
+                for(int m = k - i; m &gt;= j; m -= i)
+                {
+                    if(temp &lt; a[m])
+                    {
+                        a[m + i] = a[m];
+                        if(m == j)
+                            a[m] = temp;
+                    }
+                    else
+                    {
+                        a[m + i] = temp;
+                        break;
+                    }
+                }
+            }
+}
 </code></pre></div>
-<p>当然， Runnalbe 对象，也不是只有这一种形式，例如如果我们想要线程执行时返回一个值，就需要用到另一种 Runnalbe 对象，它
-对原来的 Runnalbe 对象进行了包装。</p>
-<div class="highlight"><pre><code class="language-java" data-lang="java">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">startFutureTask</span><span class="o">()</span> <span class="o">{</span>
-        <span class="n">FutureTask</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span> <span class="n">task</span> <span class="o">=</span> <span class="k">new</span> <span class="n">FutureTask</span><span class="o">&lt;&gt;(</span><span class="k">new</span> <span class="n">Callable</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;()</span> <span class="o">{</span>
-            <span class="kd">public</span> <span class="n">Integer</span> <span class="nf">call</span><span class="o">()</span> <span class="o">{</span>
-                <span class="k">return</span> <span class="mi">1</span><span class="o">;</span>
-            <span class="o">}</span>
-        <span class="o">});</span>
-
-        <span class="k">new</span> <span class="nf">Thread</span><span class="o">(</span><span class="n">task</span><span class="o">).</span><span class="na">start</span><span class="o">();</span>
-
-        <span class="k">try</span> <span class="o">{</span>
-            <span class="n">Integer</span> <span class="n">result</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="na">get</span><span class="o">();</span>
-            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;future result &quot;</span> <span class="o">+</span> <span class="n">result</span><span class="o">);</span>
-        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">InterruptedException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
-            <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
-        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">ExecutionException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
-            <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
+<p><strong>3、Bubblesort:</strong>
+最坏情况：逆序，6,5,4,3,2,1，比较次数：n<em>(n - 1) / 2;  移动次数：3 * n</em>(n - 1) / 2
+最好情况：正序，123456，比较次数n
+平均情况：
+算法稳定</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">void bubblesort(unsigned long *a,int num)
+{
+    for(int i = 0; i &lt; num; i++)
+        for(int j = num - 1; j &gt;= i + 1; j--)
+        {
+            unsigned long temp;
+            if(a[j] &lt; a[j - 1])
+            {
+                temp = a[j - 1];
+                a[j - 1] = a[j];
+                a[j] = temp;
+            }
+        }
+}
 </code></pre></div>
-<h2>结束线程</h2>
-
-<h2>wait 与 sleep</h2>
-
-<p>sleep 会使得当前线程休眠一段时间，但并不会释放已经得到的锁。</p>
-
-<p>wait 会阻塞住，并释放已经得到的锁。一直到有人调用 notify 或者 notifyAll，它会重新尝试得到锁，然后再唤醒。</p>
-
-<h2>线程池</h2>
-
-<h3>好处</h3>
-
-<ul>
-<li>复用</li>
-</ul>
-
-<p>线程池中有一系列线程，这些线程在执行完任务后，并不会被销毁，而会从任务队列中取出任务，执行这些任务。这样，就避免为每个任务
-都创建线程，销毁线程。 在有大量短命线程的场景下，如果创建线程和销毁线程的时间比线程执行任务的时间还长，显然是不划算的，这时候，使用线程池就会有明显
-的好处。</p>
-
-<ul>
-<li>流控</li>
-</ul>
-
-<p>同时，可以设置线程数目，这样，线程不会增大到影响系统整体性能的程度。当任务太多时，可以在队列中排队，
-如果有空闲线程，他们会从队列中取出任务执行。</p>
-
-<h3>使用</h3>
-
-<ul>
-<li>线程数目</li>
-</ul>
-
-<p>那么，线程的数目要设置成多少呢？这需要根据任务类型的不同来设置，假如是大量计算型的任务，他们不会阻塞，那么可以将线程数目设置
-为处理器数目。而如果任务中涉及大量IO，有些线程会阻塞住，这样就要根据阻塞线程数目与运行线程数目的比例，以及处理器数目来设置
-线程总数目。例如阻塞线程数目与运行线程数目之比为n, 处理器数目为p，那么可以设置 n * (p + 1) 个线程，保证有 n 个线程处于运行
-状态。</p>
-
-<ul>
-<li>Executors</li>
-</ul>
-
-<p>JDK 的 java.util.concurrent.Executors 类提供了几个静态的方法，用于创建不同类型的线程池。</p>
-<div class="highlight"><pre><code class="language-java" data-lang="java"><span class="n">ExecutorService</span> <span class="n">service</span> <span class="o">=</span> <span class="n">Executors</span><span class="o">.</span><span class="na">newFixedThreadPool</span><span class="o">(</span><span class="mi">10</span><span class="o">);</span>
-<span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">Future</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;&gt;</span> <span class="n">results</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
-<span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">14</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
-    <span class="n">Future</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span> <span class="n">r</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="na">submit</span><span class="o">(</span><span class="k">new</span> <span class="n">Callable</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;()</span> <span class="o">{</span>
-        <span class="kd">public</span> <span class="n">Integer</span> <span class="nf">call</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="k">new</span> <span class="nf">Random</span><span class="o">().</span><span class="na">nextInt</span><span class="o">();</span>
-    <span class="o">});</span>
-    <span class="n">results</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">r</span><span class="o">);</span>
-<span class="o">}</span>
+<p><strong>4、selectsort:</strong>
+和冒泡排序不同的是每次都只找到后面s[i+1,end]中最小的，仅进行下标的记录，而不进行相邻位置的交换。
+最好最坏情况和冒泡一样，不过移动次数减少，比较次数一样。</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">void selectsort(unsigned long *a,int num)
+{
+    int min_flag;
+    for(int i = 0; i &lt; num; i++)
+    {
+        unsigned long min = a[i];
+        min_flag = i;
+        for(int j = i; j &lt; num; j++)
+        {
+            if(a[j] &lt; min)
+            {
+                min = a[j];
+                min_flag = j;
+            }
+        }
+        unsigned long temp = a[min_flag];
+        a[min_flag] = a[i];
+        a[i] = temp;
+    }
+}
 </code></pre></div>
-<p><code>newFixedThreadPool</code> 可以创建固定数目的线程，一旦创建不会自动销毁线程，即便长期没有任务。除非显式关闭线程池。如果任务队列中有任务，就取出任务执行。</p>
+<p><strong>5、Qsort（挖坑、填数）</strong>
+最坏情况：每次partition都取的是当前组最大或最小，62345，每次分治的时候都是一个数组中有一个，另外一个有m-1个，故需进行n次划分，而每次进行的比较次数为m-1，故复杂度为n^2
+最好情况：每次flag取中间大小的数，分治2边数组大小差不多，则会划分logn次，而进行比较次数就是每组的元素数，故为nlogn。
+平均情况：假设规模为N的问题分为一个规模为9/10N的问题和规模为1/10N的问题，即T(n) = T(9n/10) + T(n/10) + Θ(n),用递归树分析可得T(n) = O(nlogn)，而且比分区9:1要更平均（也就是情况更好）的概率为80%，所以在绝大部分情况下快速排序算法的运行时间为O(nlogn)。</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">//i从左往右，j从右往左，flag为第一个元素，将左边（i所指）比flag大的放到右边，把右边（j所指）的放到左边，i和j交替进行，挖坑、填数 
+int partition(unsigned long *a,int start,int end)
+{
+    unsigned long flag = a[start];
+    int i = start;
+    int j = end;
+    //每次先跳过不需要动的，然后对需要动的进行移动 
+    while(i &lt; j)
+    {
+        //跳过右边比flag大的 
+        while((a[j] &gt;= flag) &amp;&amp; (i &lt; j)) j--;
+        if(i &lt; j)
+            a[i++] = a[j];
+        //跳过左边比flag小的 
+        while((a[i] &lt;= flag) &amp;&amp; (i &lt; j))i++;
+            if(i &lt; j)
+                a[j--] = a[i];          
+    }
+    a[i] = flag;
+    return i;
+}
 
-<p>另外，还可以使用 <code>newCachedThreadPool</code> 方法创建一个不设定固定线程数目的线程池，它有一个特性，线程完成任务后，如果一分钟之内又有新任务，就会复用这个线程执行新任务。如果超过一分钟还没有任务执行，就会自动销毁。</p>
+//不断进行左右分治的partition，直到每个左右数组&quot;仅有一个元素 &quot;
+void qsort(unsigned long *a,int start,int end)
+{
+    //start &lt; end,保证仅有一个元素的时候停止 
+    if(start &lt; end)
+    {
+        int mid = partition(a,start,end);
+        qsort(a,start,mid - 1);
+        qsort(a,mid + 1,end);
+    }
+}
+</code></pre></div>
+<p><strong>6、mergesort</strong>
+Merge的最坏情况，需要进行n次比较与n次移动。
+        最好情况，进行n次移动+比较。
+最好情况：已排好序，不用移动，仅比较 nlogn
+最坏情况：一直都是merge的最坏情况，分组每次都是平均分的，故分logn次，所以也是nlogn</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">//[start:mid]是array1，[mid+1:end]是array2 
+void merge(unsigned long *a,int start,int mid,int end,unsigned long *res)
+{
+    int frsize = mid - start;
+    unsigned long temp[1000];
+    int j = mid + 1;
+    int i = start;
+    int k = 0;
+    while((i &lt;= mid) &amp;&amp; (j &lt;= end))
+    {
+        if(a[i]  &gt; a[j])
+            temp[k++] = a[j++];
+        else
+            temp[k++] = a[i++];
+    }
+    if(i == mid + 1)//first array finishes first
+        for(int m = j; m &lt;= end; m++)
+            temp[k++] = a[m];
+    else//second finishes first
+        for(int m = i; m &lt;= mid; m++)
+            temp[k++] = a[m];
+    for(int i = 0; i &lt;=  end; i++)
+        res[i] = temp[i];
+}
 
-<p>另外，还提供了 <code>newSingleThreadExecutor</code> 创建有一个工作线程的线程池。</p>
+void mergesort(unsigned long *a ,int start,int end)
+{
+    if(start &lt; end)
+    {
+        int i = (start + end) / 2;
+        mergesort(a,start,i);
+        mergesort(a,i + 1,end);
+        merge(a,start,i,end,a);
+    }
+}
+</code></pre></div>
+<p><strong>归并排序与快速排序比较：归并的merge要开额外的空间，而快排的partition可以原地进行！</strong></p>
 
-<h3>原理</h3>
+<p><strong>7.堆排序</strong>
+堆排序主要需要建立堆，通过heapify（int *a,int start,int num）操作将堆建立，然后每次取出根节点并将其移除后再将余下num-1个数用heapify操作建立堆。heapify操作一次复杂度为logn，一共n次heapify操作，复杂度O（nlogn）。其为不稳定排序算法。是就地排序，只需要O（1）的空间。</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">#include &quot;heap.h&quot;
 
-<p>JDK 中的线程池通过 HashSet 存储工作者线程，通过 BlockingQueue 来存储待处理任务。</p>
+using namespace std;
 
-<p>通过核心工作者数目(corePoolSize) 和 最大工作者数目(maximumPoolSize) 来确定如何处理任务。如果当前工作者线程数目
-小于核心工作者数目，则创建一个工作者线程执行这个任务。否则，将这个任务放入待处理队列。如果入队失败，再看看当前工作
-者数目是不是小于最大工作者数目，如果小于，则创建工作者线程执行这个任务。否则，拒绝执行这个任务。</p>
+//a数组有效元素为a[1]-a[num].
+void heap::min_heapify(int *a, int p,int num)
+{
+    int lchild = 2 * p, rchild = 2 * p + 1;
+    int temp;
+    if (lchild &gt; num)//已经到叶子节点
+        return;
+    else if (rchild &gt; num)
+    {
+        if (a[lchild] &lt; a[p])
+        {
+            temp = a[p];
+            a[p] = a[lchild];
+            a[lchild] = temp;
+        }
+        return;
+    }
 
-<p>另外，如果待处理队列中没有任务要处理，并且工作者线程数目超过了核心工作者数目，那么，需要减少工作者线程数目。</p>
+    min_heapify(a, 2 * p, num);
+    min_heapify(a, 2 * p + 1, num);
 
+    int min;
+    if (a[lchild] &lt; a[rchild])
+        min = lchild;
+    else
+        min = rchild;
+    if (a[min] &lt; a[p])
+    {
+        temp = a[p];
+        a[p] = a[min];
+        a[min] = temp;
+    }
+}
+
+
+void heap::min_heapsort(int *a, int num)
+{
+    for (int i = num; i &gt;= 1; i--)
+    {
+        min_heapify(a, 1, i);
+        int temp = a[i];
+        a[i] = a[1];
+        a[1] = temp;    
+    }
+}
+</code></pre></div>
+<p><strong>8、桶排序</strong>
+此排序是为了优化计数排序的空间太大问题，通过将数组的数据全部归一化到[0,1)之间，然后建立m个区间分别为[0,1/m)、[1/m,2/m)、……[m-1/m,1)的bucket，每个桶都是一个链表，将归一化的数据放入到对应的桶中，然后对每个桶进行排序（用qsort、insertsort.etc都行），然后按顺序输出即可。
+<img src="http://img.blog.csdn.net/20150407201233605" alt="这里写图片描述"></p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">void bucketsort(unsigned long *a,int num,int m)
+{
+    double data[1000];
+    unsigned long max = 0;
+    vector&lt;double&gt; bucket[20];
+    float seg = 1.0 / m;
+    for(int i = 0; i &lt; num; i++)
+    {
+        if(max &lt; a[i])
+            max = a[i];
+    }
+    max = max + 100;
+    for(int i = 0; i &lt; num; i++)
+    {
+        data[i] = (double)a[i] / max;
+        for(int j = 0; j &lt; m; j++)//放桶里 
+        {
+            if(data[i] &gt;= seg * j &amp;&amp; data[i] &lt;= seg * (j + 1))
+            {
+                bucket[j].push_back(data[i]);
+                break;
+            }
+        }
+    }
+    for(int i = 0; i &lt; m; i++)
+        sort(bucket[i].begin(),bucket[i].end());
+    int base = 0;
+
+    for(int i = 0; i &lt; m; i++)
+    {
+        for(int j = 0; j &lt; bucket[i].size(); j++)
+            a[base++] = (bucket[i])[j] * max;
+    }
+}
+</code></pre></div>
+<p>复杂度分析：
+在做出数据落入每个bucket都是等可能的情况下，我们可以看到T() = O(n) + 每个桶排序时间总和，两边同时取期望，然后可以证明，排序时间的期望（用insertsort）为：n * (2 - 1/n).最终桶排序复杂度为O（n）。</p>
+
+<p><strong>9、基数排序</strong></p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">void radixsort(unsigned long *a,int num)
+{
+    vector&lt;int&gt; radix[10];//装每次排序后的序列 
+    int allzero = 0;
+    unsigned long temp[1000];
+
+    int step = 1;
+
+    while(!allzero)
+    {
+        allzero = 1;
+        for(int i = 0; i &lt; num; i++)
+        {
+            int digit = a[i] % (int)pow(10,step);
+            digit /= (int)pow(10,step - 1);
+            radix[digit].push_back(i);
+            if(digit &gt; 0)
+                allzero = 0;
+        }
+        int k = 0;
+        for(int i = 0; i &lt; 10; i++)//按照序列顺序输出即可 
+        {
+            for(int j = 0; j &lt; radix[i].size(); j++)
+                temp[k++] = a[(radix[i])[j]];
+            radix[i].clear();
+        }
+        for(int i = 0; i &lt; num; i++)
+            a[i] = temp[i];
+        step++;
+    }
+}
+</code></pre></div>
     <nav class="article-previous fn-clear">
         
+        <a class="prev" href="/%E7%A7%91%E7%A0%94/2015/04/05/opencv%20codebook%E5%AD%A6%E4%B9%A0.html" rel="bookmark">&laquo;&nbsp;opencv codebook学习</a>
         
-        <a class="next" href="/%E7%A7%91%E7%A0%94/2015/04/05/opencv%20codebook%E5%AD%A6%E4%B9%A0.html" rel="bookmark">opencv codebook学习&nbsp;&raquo;</a>
+        
+        <a class="next" href="/%E7%AE%97%E6%B3%95/2015/04/05/%E5%87%B8%E5%8C%85%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90.html" rel="bookmark">凸包算法分析&nbsp;&raquo;</a>
         
     </nav>
     <div class="comment">

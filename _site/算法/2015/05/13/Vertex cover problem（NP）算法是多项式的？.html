@@ -11,7 +11,7 @@
          **
         -->
         <meta charset="utf-8">
-        <title>Java 中的并发 - Qilong Tech</title>
+        <title>Vertex cover problem（NP）算法是多项式的？ - Qilong Tech</title>
         <!-- meta -->
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
         <meta name="generator" content="Jekyll" />
@@ -126,136 +126,285 @@
                 <div class="main">
                     
     <div class="article article-post">
-    <h2 class="title">Java 中的并发</h2>
+    <h2 class="title">Vertex cover problem（NP）算法是多项式的？</h2>
     <div class="info">
         <span class="info-title"><i class="icon-calendar"></i> Published: </span>
-        <span class="info-date">20 Sep 2014</span>
+        <span class="info-date">13 May 2015</span>
         <span class="info-title"><i class="icon-folder-open"></i> Category: </span>
-        <span class="info-link"><a href="/navigations/categories.html#技术-ref" >技术</a></span>
+        <span class="info-link"><a href="/navigations/categories.html#算法-ref" >算法</a></span>
     </div>
-    <h2>如何创建一个线程</h2>
+    <p>3.1. Procedure. Given a simple graph G with n vertices and a vertex cover C of G, if C has no removable vertices, output C. Else, for each removable vertex v of C, find the number ρ(C−{v}) of removable vertices of the vertex cover C−{v}. Let vmax denote a removable vertex such that ρ(C−{vmax}) is a maximum and obtain the vertex cover C−{vmax}. Repeat until the vertex cover has no removable vertices.</p>
 
-<p>按 Java 语言规范中的说法，创建线程只有一种方式，就是创建一个 Thread 对象。而从 HotSpot 虚拟机的角度看，创建一个虚拟机线程
-有两种方式，一种是创建 Thread 对象，另一种是创建 一个本地线程，加入到虚拟机线程中。</p>
+<p>3.2. Procedure. Given a simple graph G with n vertices and a minimal vertex cover C of G, if there is no vertex v in C such that v has exactly one neighbor w outside C, output C. Else, find a vertex v in C such that v has exactly one neighbor w outside C. Define Cv,w by removing v from C and adding w to C. Perform procedure 3.1 on Cv,w and output the resulting vertex cover.</p>
 
-<p>如果从 Java 语法的角度。有两种方法。</p>
+<p>3.3. Algorithm. Given as input a simple graph G with n vertices labeled 1, 2, …, n, search for a vertex cover of size at most k. At each stage, if the vertex cover obtained has size at most k, then stop.</p>
 
-<p>第一是继承 Thread 类，实现 run 方法，并创建子类对象。</p>
-<div class="highlight"><pre><code class="language-java" data-lang="java">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">startThreadUseSubClass</span><span class="o">()</span> <span class="o">{</span>
-        <span class="kd">class</span> <span class="nc">MyThread</span> <span class="kd">extends</span> <span class="n">Thread</span> <span class="o">{</span>
-            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">()</span> <span class="o">{</span>
-                <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;start thread using Subclass of Thread&quot;</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
+<p>Part I. For i = 1, 2, ..., n in turn
+        1.Initialize the vertex cover Ci = V−{i}.
+        2.Perform procedure 3.1 on Ci.
+        3.For r = 1, 2, ..., n−k perform procedure 3.2 repeated r times.
+        4.The result is a minimal vertex cover Ci.</p>
 
-        <span class="n">MyThread</span> <span class="n">thread</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">MyThread</span><span class="o">();</span>
-        <span class="n">thread</span><span class="o">.</span><span class="na">start</span><span class="o">();</span>
-    <span class="o">}</span>
+<p>Part II. For each pair of minimal vertex covers Ci, Cj found in Part I
+        1.Initialize the vertex cover Ci, j = Ci∪Cj .
+        2.Perform procedure 3.1 on Ci, j.
+        3.For r = 1, 2, ..., n−k perform procedure 3.2 repeated r times.
+        4.The result is a minimal vertex cover Ci, j.</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">#include &lt;iostream&gt;
+
+#include &lt;vector&gt;
+
+#include&lt;algorithm&gt;
+
+using namespace std;
+
+
+class graph
+{
+    vector&lt;int&gt; p_set[101];
+    vector&lt;vector&lt;int&gt; &gt; covers;
+    vector&lt;int&gt; allcover;
+    int Max_V;
+    int Vnum;
+    int Enum;
+
+public:
+
+    vector&lt;int&gt; res;
+    int min;
+    void initial();
+    bool removable(vector&lt;int&gt; neighbor, vector&lt;int&gt; cover);
+    int max_removable(vector&lt;int&gt; cover);
+    vector&lt;int&gt; procedure_1(vector&lt;int&gt; cover);
+    vector&lt;int&gt; procedure_2(vector&lt;int&gt; cover, int k);
+    int cover_size(vector&lt;int&gt; cover);
+    bool findvertexcorver();
+    bool pairwiseUnions();
+};
+
+void graph::initial()
+{
+    cin &gt;&gt; Vnum &gt;&gt; Enum &gt;&gt; Max_V;
+    for (int j = 0; j &lt; Enum; j++)
+    {
+        int a, b;
+        cin &gt;&gt; a &gt;&gt; b;
+        p_set[a - 1].push_back(b - 1);
+        p_set[b - 1].push_back(a - 1);
+    }
+    for (int i = 0; i &lt; Vnum; i++)
+        allcover.push_back(1);
+    min = Vnum + 1;
+    res.clear();
+}
+
+
+bool graph::removable(vector&lt;int&gt; neighbor, vector&lt;int&gt; cover)
+{
+    bool check = true;
+    for (int i = 0; i &lt; neighbor.size(); i++)
+        if (cover[neighbor[i]] == 0)
+        {
+            check = false;
+            break;
+        }
+    return check;
+}
+
+int graph::max_removable(vector&lt;int&gt; cover)
+{
+    int r = -1, max = -1;
+    for (int i = 0; i &lt; cover.size(); i++)
+    {
+        if (cover[i] == 1 &amp;&amp; removable(p_set[i], cover) == true)
+        {
+            vector&lt;int&gt; temp_cover = cover;
+            temp_cover[i] = 0;
+            int sum = 0;
+            for (int j = 0; j &lt; temp_cover.size(); j++)
+                if (temp_cover[j] == 1 &amp;&amp; removable(p_set[j], temp_cover) == true)
+                    sum++;
+            if (sum&gt;max)
+            {
+                max = sum;
+                r = i;
+            }
+        }
+    }
+    return r;
+}
+
+vector&lt;int&gt; graph::procedure_1(vector&lt;int&gt; cover)
+{
+    vector&lt;int&gt; temp_cover = cover;
+    int r = 0;
+    while (r != -1)
+    {
+        r = max_removable(temp_cover);
+        if (r != -1) temp_cover[r] = 0;
+    }
+    return temp_cover;
+}
+
+vector&lt;int&gt; graph::procedure_2(vector&lt;int&gt; cover, int k)
+{
+    int count = 0;
+    vector&lt;int&gt; temp_cover = cover;
+    int i = 0;
+    for (int i = 0; i &lt; temp_cover.size(); i++)
+    {
+        if (temp_cover[i] == 1)
+        {
+            int sum = 0, index;
+            for (int j = 0; j&lt;p_set[i].size(); j++)
+                if (temp_cover[p_set[i][j]] == 0) { index = j; sum++; }
+            if (sum == 1 &amp;&amp; cover[p_set[i][index]] == 0)
+            {
+                temp_cover[p_set[i][index]] = 1;
+                temp_cover[i] = 0;
+                temp_cover = procedure_1(temp_cover);
+                count++;
+            }
+            if (count&gt;k) 
+                break;
+        }
+    }
+    return temp_cover;
+}
+
+
+int graph::cover_size(vector&lt;int&gt; cover)
+{
+    int count = 0;
+    for (int i = 0; i &lt; cover.size(); i++)
+        if (cover[i] == 1) count++;
+    return count;
+}
+
+
+bool graph::findvertexcorver()
+{
+    bool found = false;
+    int counter = 0;
+    int s;
+    for (int i = 0; i &lt; allcover.size(); i++)
+    {
+        if (found) break;
+        counter++;
+        vector&lt;int&gt; cover = allcover;
+        cover[i] = 0;
+        cover = procedure_1(cover);
+        s = cover_size(cover);
+        if (s &lt; min) min = s;
+        if (s &lt;= Max_V)
+        {
+            for (int j = 0; j &lt; cover.size(); j++) if (cover[j] == 1) res.push_back(j + 1);
+            covers.push_back(cover);
+            found = true;
+            break;
+        }
+        for (int j = 0; j &lt; Vnum - Max_V; j++)
+            cover = procedure_2(cover, j);
+        s = cover_size(cover);
+        if (s &lt; min) min = s;
+        for (int j = 0; j &lt; cover.size(); j++) if (cover[j] == 1) res.push_back(j + 1);
+        covers.push_back(cover);
+        if (s &lt;= Max_V)
+        { 
+            found = true; 
+            break; 
+        }
+        res.clear();
+    }
+    return found;
+}
+
+
+bool graph::pairwiseUnions()
+{
+    bool found = false;
+    int counter = 0;
+    int s;
+    for (int p = 0; p &lt; covers.size(); p++)
+    {
+        if (found) break;
+        for (int q = p + 1; q &lt; covers.size(); q++)
+        {
+            if (found) break;
+            counter++;
+            vector&lt;int&gt; cover = allcover;
+            for (int r = 0; r &lt; cover.size(); r++)
+                if (covers[p][r] == 0 &amp;&amp; covers[q][r] == 0) cover[r] = 0;
+            cover = procedure_1(cover);
+            s = cover_size(cover);
+            if (s&lt;min) min = s;
+            if (s &lt;= Max_V)
+            {
+                for (int j = 0; j &lt; cover.size(); j++) if (cover[j] == 1) res.push_back(j + 1);
+                found = true;
+                break;
+            }
+            for (int j = 0; j &lt; Max_V; j++)
+                cover = procedure_2(cover, j);
+            s = cover_size(cover);
+            if (s&lt;min) min = s;
+            for (int j = 0; j &lt; cover.size(); j++) if (cover[j] == 1) res.push_back(j + 1);
+            if (s &lt;= Max_V){ found = true; break; }
+        }
+        res.clear();
+    }
+    return found;
+}
+
+
+int main()
+{
+    freopen(&quot;E:\\study\\算法复杂度\\vetex cover\\in.txt&quot;, &quot;rb&quot;, stdin);
+    int n;
+    cin &gt;&gt; n;
+    for (int m = 0; m &lt; n; m++)
+    {
+        graph g;
+        g.initial();
+        if (g.findvertexcorver())
+        {
+            cout &lt;&lt; g.min &lt;&lt; endl;
+            for (int i = 0; i &lt; g.res.size(); i++)
+                cout &lt;&lt; g.res[i] &lt;&lt; &quot; &quot;;
+            cout &lt;&lt; endl;
+            continue;
+        }
+        if (g.pairwiseUnions())
+        {
+            cout &lt;&lt; g.min &lt;&lt; endl;
+            for (int i = 0; i &lt; g.res.size(); i++)
+                cout &lt;&lt; g.res[i] &lt;&lt; &quot; &quot;;
+            cout &lt;&lt; endl;
+            continue;
+        }
+        cout &lt;&lt; -1 &lt;&lt; endl;
+    }
+    return 0;
+}
 </code></pre></div>
-<p>另一种是传递给 Thread 构造函数一个 Runnable 对象。</p>
-<div class="highlight"><pre><code class="language-java" data-lang="java">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">startThreadUseRunnalbe</span><span class="o">()</span> <span class="o">{</span>
-        <span class="n">Thread</span> <span class="n">thread</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">Thread</span><span class="o">(</span><span class="k">new</span> <span class="nf">Runnable</span><span class="o">()</span> <span class="o">{</span>
-            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">()</span> <span class="o">{</span>
-                <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;start thread using runnable&quot;</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">});</span>
-        <span class="n">thread</span><span class="o">.</span><span class="na">start</span><span class="o">();</span>
-    <span class="o">}</span>
-</code></pre></div>
-<p>当然， Runnalbe 对象，也不是只有这一种形式，例如如果我们想要线程执行时返回一个值，就需要用到另一种 Runnalbe 对象，它
-对原来的 Runnalbe 对象进行了包装。</p>
-<div class="highlight"><pre><code class="language-java" data-lang="java">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">startFutureTask</span><span class="o">()</span> <span class="o">{</span>
-        <span class="n">FutureTask</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span> <span class="n">task</span> <span class="o">=</span> <span class="k">new</span> <span class="n">FutureTask</span><span class="o">&lt;&gt;(</span><span class="k">new</span> <span class="n">Callable</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;()</span> <span class="o">{</span>
-            <span class="kd">public</span> <span class="n">Integer</span> <span class="nf">call</span><span class="o">()</span> <span class="o">{</span>
-                <span class="k">return</span> <span class="mi">1</span><span class="o">;</span>
-            <span class="o">}</span>
-        <span class="o">});</span>
+<p>引用</p>
 
-        <span class="k">new</span> <span class="nf">Thread</span><span class="o">(</span><span class="n">task</span><span class="o">).</span><span class="na">start</span><span class="o">();</span>
+<blockquote>
+<p>http://www.dharwadker.org/vertex_cover/</p>
+</blockquote>
 
-        <span class="k">try</span> <span class="o">{</span>
-            <span class="n">Integer</span> <span class="n">result</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="na">get</span><span class="o">();</span>
-            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;future result &quot;</span> <span class="o">+</span> <span class="n">result</span><span class="o">);</span>
-        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">InterruptedException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
-            <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
-        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">ExecutionException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
-            <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-</code></pre></div>
-<h2>结束线程</h2>
+<p>上面给出的是准确的算法，其实不用算那么久，将  <code>bool findvertexcorver();bool pairwiseUnions();</code>
+中的循环次数从allcover.size()改为10就行，一般前几次就算出来最小值了。</p>
 
-<h2>wait 与 sleep</h2>
-
-<p>sleep 会使得当前线程休眠一段时间，但并不会释放已经得到的锁。</p>
-
-<p>wait 会阻塞住，并释放已经得到的锁。一直到有人调用 notify 或者 notifyAll，它会重新尝试得到锁，然后再唤醒。</p>
-
-<h2>线程池</h2>
-
-<h3>好处</h3>
-
-<ul>
-<li>复用</li>
-</ul>
-
-<p>线程池中有一系列线程，这些线程在执行完任务后，并不会被销毁，而会从任务队列中取出任务，执行这些任务。这样，就避免为每个任务
-都创建线程，销毁线程。 在有大量短命线程的场景下，如果创建线程和销毁线程的时间比线程执行任务的时间还长，显然是不划算的，这时候，使用线程池就会有明显
-的好处。</p>
-
-<ul>
-<li>流控</li>
-</ul>
-
-<p>同时，可以设置线程数目，这样，线程不会增大到影响系统整体性能的程度。当任务太多时，可以在队列中排队，
-如果有空闲线程，他们会从队列中取出任务执行。</p>
-
-<h3>使用</h3>
-
-<ul>
-<li>线程数目</li>
-</ul>
-
-<p>那么，线程的数目要设置成多少呢？这需要根据任务类型的不同来设置，假如是大量计算型的任务，他们不会阻塞，那么可以将线程数目设置
-为处理器数目。而如果任务中涉及大量IO，有些线程会阻塞住，这样就要根据阻塞线程数目与运行线程数目的比例，以及处理器数目来设置
-线程总数目。例如阻塞线程数目与运行线程数目之比为n, 处理器数目为p，那么可以设置 n * (p + 1) 个线程，保证有 n 个线程处于运行
-状态。</p>
-
-<ul>
-<li>Executors</li>
-</ul>
-
-<p>JDK 的 java.util.concurrent.Executors 类提供了几个静态的方法，用于创建不同类型的线程池。</p>
-<div class="highlight"><pre><code class="language-java" data-lang="java"><span class="n">ExecutorService</span> <span class="n">service</span> <span class="o">=</span> <span class="n">Executors</span><span class="o">.</span><span class="na">newFixedThreadPool</span><span class="o">(</span><span class="mi">10</span><span class="o">);</span>
-<span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">Future</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;&gt;</span> <span class="n">results</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
-<span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">14</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
-    <span class="n">Future</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span> <span class="n">r</span> <span class="o">=</span> <span class="n">service</span><span class="o">.</span><span class="na">submit</span><span class="o">(</span><span class="k">new</span> <span class="n">Callable</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;()</span> <span class="o">{</span>
-        <span class="kd">public</span> <span class="n">Integer</span> <span class="nf">call</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="k">new</span> <span class="nf">Random</span><span class="o">().</span><span class="na">nextInt</span><span class="o">();</span>
-    <span class="o">});</span>
-    <span class="n">results</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">r</span><span class="o">);</span>
-<span class="o">}</span>
-</code></pre></div>
-<p><code>newFixedThreadPool</code> 可以创建固定数目的线程，一旦创建不会自动销毁线程，即便长期没有任务。除非显式关闭线程池。如果任务队列中有任务，就取出任务执行。</p>
-
-<p>另外，还可以使用 <code>newCachedThreadPool</code> 方法创建一个不设定固定线程数目的线程池，它有一个特性，线程完成任务后，如果一分钟之内又有新任务，就会复用这个线程执行新任务。如果超过一分钟还没有任务执行，就会自动销毁。</p>
-
-<p>另外，还提供了 <code>newSingleThreadExecutor</code> 创建有一个工作线程的线程池。</p>
-
-<h3>原理</h3>
-
-<p>JDK 中的线程池通过 HashSet 存储工作者线程，通过 BlockingQueue 来存储待处理任务。</p>
-
-<p>通过核心工作者数目(corePoolSize) 和 最大工作者数目(maximumPoolSize) 来确定如何处理任务。如果当前工作者线程数目
-小于核心工作者数目，则创建一个工作者线程执行这个任务。否则，将这个任务放入待处理队列。如果入队失败，再看看当前工作
-者数目是不是小于最大工作者数目，如果小于，则创建工作者线程执行这个任务。否则，拒绝执行这个任务。</p>
-
-<p>另外，如果待处理队列中没有任务要处理，并且工作者线程数目超过了核心工作者数目，那么，需要减少工作者线程数目。</p>
+<p>复杂度：
+Given a simple graph G with n vertices, the algorithm takes less than n8+2n7+n6+n5+n4+n3+n2 steps to terminate.</p>
 
     <nav class="article-previous fn-clear">
         
+        <a class="prev" href="/%E7%94%9F%E6%B4%BB/2015/05/10/life.html" rel="bookmark">&laquo;&nbsp;飞鸟集</a>
         
-        <a class="next" href="/%E7%A7%91%E7%A0%94/2015/04/05/opencv%20codebook%E5%AD%A6%E4%B9%A0.html" rel="bookmark">opencv codebook学习&nbsp;&raquo;</a>
+        
+        <a class="next" href="/%E7%A7%91%E7%A0%94/2015/05/13/c++%20matlab%E6%B7%B7%E5%90%88%E7%BC%96%E7%A8%8B%E6%97%B6mxArray%20%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2%E9%97%AE%E9%A2%98.html" rel="bookmark">c++ matlab混合编程时mxArray 内存泄露问题&nbsp;&raquo;</a>
         
     </nav>
     <div class="comment">
