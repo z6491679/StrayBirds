@@ -139,337 +139,337 @@
 最好情况:从小到大排列（正序），1,2,3,4,5,6，比较次数 = n；
 平均情况：与最坏情况一样，为Θ（n^2）.
 算法稳定。</p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">void insertsort(unsigned long *a,int num,unsigned long *res)
-{
-    unsigned long temp[num];
-    temp[0] = a[0];
-    //每次取一个数 插入temp数组中 
-    for(int i = 1; i &lt; num; i++)
-        for(int j = i - 1; j &gt;= 0; j--)
-        {
-            if(a[i] &lt; temp[j])
-            {
-                temp[j + 1] = temp[j];
-                if(j == 0)
-                    temp[j] = a[i];
-            }
-            else
-            {
-                temp[j + 1] = a[i];
-                break;
-            }
-        }
-    for(int i = 0; i &lt; num; i++)
-        res[i] = temp[i];
-}
+<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="kt">void</span> <span class="nf">insertsort</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span><span class="kt">int</span> <span class="n">num</span><span class="p">,</span><span class="kt">unsigned</span> <span class="kt">long</span> <span class="o">*</span><span class="n">res</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">temp</span><span class="p">[</span><span class="n">num</span><span class="p">];</span>
+    <span class="n">temp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+    <span class="c1">//每次取一个数 插入temp数组中 </span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">num</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="n">j</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span><span class="o">--</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">temp</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+            <span class="p">{</span>
+                <span class="n">temp</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">temp</span><span class="p">[</span><span class="n">j</span><span class="p">];</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">j</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+                    <span class="n">temp</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+            <span class="p">}</span>
+            <span class="k">else</span>
+            <span class="p">{</span>
+                <span class="n">temp</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">num</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">res</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">temp</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+<span class="p">}</span>
 
-//原地排序版本
-void insertsort1(unsigned long *a,int num)
-{
-    unsigned long key;
-    //每次取一个数 插入temp数组中 
-    for(int i = 1; i &lt; num; i++)
-    {
-        key = a[i];
-        for(int j = i - 1; j &gt;= 0; j--)
-        {
-            if(key &lt; a[j])
-            {
-                a[j + 1] = a[j];
-                if(j == 0)
-                    a[j] = key;
-            }
-            else
-            {
-                a[j + 1] = key;
-                break;
-            }
-        }
-    }
-}
+<span class="c1">//原地排序版本</span>
+<span class="kt">void</span> <span class="nf">insertsort1</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span><span class="kt">int</span> <span class="n">num</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">key</span><span class="p">;</span>
+    <span class="c1">//每次取一个数 插入temp数组中 </span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">num</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="n">j</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span><span class="o">--</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">key</span> <span class="o">&lt;</span> <span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+            <span class="p">{</span>
+                <span class="n">a</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="p">];</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">j</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+                    <span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">key</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">else</span>
+            <span class="p">{</span>
+                <span class="n">a</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">key</span><span class="p">;</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
 </code></pre></div>
 <p><strong>2、Shellsort：（分组的插入排序）</strong>
 开始无序的时候每组元素较少，最后差不多有序的时候元素才多起来，所以效果比插入排序要好。
 算法不稳定 14336，步长开始取2，则33会换。</p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">void shellsort(unsigned long *a,int num)
-{
-    int step = num / 3;
-    unsigned long temp;
-    //每次插入排序的间隔步长 
-    for(int i = step; i &gt;= 1; i /= 2)
-    //插入排序
-        for(int j = 0; j  &lt; i; j++) 
-        //将每隔i的数分为一组，并进行每组的插入排序 
-            for(int k = j + i; k &lt;= num - 1; k += i)
-            {
-                temp = a[k];
-                for(int m = k - i; m &gt;= j; m -= i)
-                {
-                    if(temp &lt; a[m])
-                    {
-                        a[m + i] = a[m];
-                        if(m == j)
-                            a[m] = temp;
-                    }
-                    else
-                    {
-                        a[m + i] = temp;
-                        break;
-                    }
-                }
-            }
-}
+<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="kt">void</span> <span class="nf">shellsort</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span><span class="kt">int</span> <span class="n">num</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">step</span> <span class="o">=</span> <span class="n">num</span> <span class="o">/</span> <span class="mi">3</span><span class="p">;</span>
+    <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">temp</span><span class="p">;</span>
+    <span class="c1">//每次插入排序的间隔步长 </span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">step</span><span class="p">;</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">/=</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="c1">//插入排序</span>
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span>  <span class="o">&lt;</span> <span class="n">i</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span> 
+        <span class="c1">//将每隔i的数分为一组，并进行每组的插入排序 </span>
+            <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="n">j</span> <span class="o">+</span> <span class="n">i</span><span class="p">;</span> <span class="n">k</span> <span class="o">&lt;=</span> <span class="n">num</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="n">k</span> <span class="o">+=</span> <span class="n">i</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">temp</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">k</span><span class="p">];</span>
+                <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">m</span> <span class="o">=</span> <span class="n">k</span> <span class="o">-</span> <span class="n">i</span><span class="p">;</span> <span class="n">m</span> <span class="o">&gt;=</span> <span class="n">j</span><span class="p">;</span> <span class="n">m</span> <span class="o">-=</span> <span class="n">i</span><span class="p">)</span>
+                <span class="p">{</span>
+                    <span class="k">if</span><span class="p">(</span><span class="n">temp</span> <span class="o">&lt;</span> <span class="n">a</span><span class="p">[</span><span class="n">m</span><span class="p">])</span>
+                    <span class="p">{</span>
+                        <span class="n">a</span><span class="p">[</span><span class="n">m</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">m</span><span class="p">];</span>
+                        <span class="k">if</span><span class="p">(</span><span class="n">m</span> <span class="o">==</span> <span class="n">j</span><span class="p">)</span>
+                            <span class="n">a</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">temp</span><span class="p">;</span>
+                    <span class="p">}</span>
+                    <span class="k">else</span>
+                    <span class="p">{</span>
+                        <span class="n">a</span><span class="p">[</span><span class="n">m</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">temp</span><span class="p">;</span>
+                        <span class="k">break</span><span class="p">;</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+<span class="p">}</span>
 </code></pre></div>
 <p><strong>3、Bubblesort:</strong>
 最坏情况：逆序，6,5,4,3,2,1，比较次数：n<em>(n - 1) / 2;  移动次数：3 * n</em>(n - 1) / 2
 最好情况：正序，123456，比较次数n
 平均情况：
 算法稳定</p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">void bubblesort(unsigned long *a,int num)
-{
-    for(int i = 0; i &lt; num; i++)
-        for(int j = num - 1; j &gt;= i + 1; j--)
-        {
-            unsigned long temp;
-            if(a[j] &lt; a[j - 1])
-            {
-                temp = a[j - 1];
-                a[j - 1] = a[j];
-                a[j] = temp;
-            }
-        }
-}
+<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="kt">void</span> <span class="nf">bubblesort</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span><span class="kt">int</span> <span class="n">num</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">num</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="n">num</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="n">j</span> <span class="o">&gt;=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> <span class="n">j</span><span class="o">--</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">temp</span><span class="p">;</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">a</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
+            <span class="p">{</span>
+                <span class="n">temp</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">];</span>
+                <span class="n">a</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="p">];</span>
+                <span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">temp</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+<span class="p">}</span>
 </code></pre></div>
 <p><strong>4、selectsort:</strong>
 和冒泡排序不同的是每次都只找到后面s[i+1,end]中最小的，仅进行下标的记录，而不进行相邻位置的交换。
 最好最坏情况和冒泡一样，不过移动次数减少，比较次数一样。</p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">void selectsort(unsigned long *a,int num)
-{
-    int min_flag;
-    for(int i = 0; i &lt; num; i++)
-    {
-        unsigned long min = a[i];
-        min_flag = i;
-        for(int j = i; j &lt; num; j++)
-        {
-            if(a[j] &lt; min)
-            {
-                min = a[j];
-                min_flag = j;
-            }
-        }
-        unsigned long temp = a[min_flag];
-        a[min_flag] = a[i];
-        a[i] = temp;
-    }
-}
+<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="kt">void</span> <span class="nf">selectsort</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span><span class="kt">int</span> <span class="n">num</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">min_flag</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">num</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">min</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+        <span class="n">min_flag</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">num</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">min</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">min</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="p">];</span>
+                <span class="n">min_flag</span> <span class="o">=</span> <span class="n">j</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">temp</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">min_flag</span><span class="p">];</span>
+        <span class="n">a</span><span class="p">[</span><span class="n">min_flag</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+        <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">temp</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
 </code></pre></div>
 <p><strong>5、Qsort（挖坑、填数）</strong>
 最坏情况：每次partition都取的是当前组最大或最小，62345，每次分治的时候都是一个数组中有一个，另外一个有m-1个，故需进行n次划分，而每次进行的比较次数为m-1，故复杂度为n^2
 最好情况：每次flag取中间大小的数，分治2边数组大小差不多，则会划分logn次，而进行比较次数就是每组的元素数，故为nlogn。
 平均情况：假设规模为N的问题分为一个规模为9/10N的问题和规模为1/10N的问题，即T(n) = T(9n/10) + T(n/10) + Θ(n),用递归树分析可得T(n) = O(nlogn)，而且比分区9:1要更平均（也就是情况更好）的概率为80%，所以在绝大部分情况下快速排序算法的运行时间为O(nlogn)。</p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">//i从左往右，j从右往左，flag为第一个元素，将左边（i所指）比flag大的放到右边，把右边（j所指）的放到左边，i和j交替进行，挖坑、填数 
-int partition(unsigned long *a,int start,int end)
-{
-    unsigned long flag = a[start];
-    int i = start;
-    int j = end;
-    //每次先跳过不需要动的，然后对需要动的进行移动 
-    while(i &lt; j)
-    {
-        //跳过右边比flag大的 
-        while((a[j] &gt;= flag) &amp;&amp; (i &lt; j)) j--;
-        if(i &lt; j)
-            a[i++] = a[j];
-        //跳过左边比flag小的 
-        while((a[i] &lt;= flag) &amp;&amp; (i &lt; j))i++;
-            if(i &lt; j)
-                a[j--] = a[i];          
-    }
-    a[i] = flag;
-    return i;
-}
+<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="c1">//i从左往右，j从右往左，flag为第一个元素，将左边（i所指）比flag大的放到右边，把右边（j所指）的放到左边，i和j交替进行，挖坑、填数 </span>
+<span class="kt">int</span> <span class="nf">partition</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span><span class="kt">int</span> <span class="n">start</span><span class="p">,</span><span class="kt">int</span> <span class="n">end</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">flag</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">start</span><span class="p">];</span>
+    <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">start</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="n">end</span><span class="p">;</span>
+    <span class="c1">//每次先跳过不需要动的，然后对需要动的进行移动 </span>
+    <span class="k">while</span><span class="p">(</span><span class="n">i</span> <span class="o">&lt;</span> <span class="n">j</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">//跳过右边比flag大的 </span>
+        <span class="k">while</span><span class="p">((</span><span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">flag</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">i</span> <span class="o">&lt;</span> <span class="n">j</span><span class="p">))</span> <span class="n">j</span><span class="o">--</span><span class="p">;</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">i</span> <span class="o">&lt;</span> <span class="n">j</span><span class="p">)</span>
+            <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="p">];</span>
+        <span class="c1">//跳过左边比flag小的 </span>
+        <span class="k">while</span><span class="p">((</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">flag</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">i</span> <span class="o">&lt;</span> <span class="n">j</span><span class="p">))</span><span class="n">i</span><span class="o">++</span><span class="p">;</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">i</span> <span class="o">&lt;</span> <span class="n">j</span><span class="p">)</span>
+                <span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="o">--</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>          
+    <span class="p">}</span>
+    <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">flag</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">i</span><span class="p">;</span>
+<span class="p">}</span>
 
-//不断进行左右分治的partition，直到每个左右数组&quot;仅有一个元素 &quot;
-void qsort(unsigned long *a,int start,int end)
-{
-    //start &lt; end,保证仅有一个元素的时候停止 
-    if(start &lt; end)
-    {
-        int mid = partition(a,start,end);
-        qsort(a,start,mid - 1);
-        qsort(a,mid + 1,end);
-    }
-}
+<span class="c1">//不断进行左右分治的partition，直到每个左右数组&quot;仅有一个元素 &quot;</span>
+<span class="kt">void</span> <span class="nf">qsort</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span><span class="kt">int</span> <span class="n">start</span><span class="p">,</span><span class="kt">int</span> <span class="n">end</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">//start &lt; end,保证仅有一个元素的时候停止 </span>
+    <span class="k">if</span><span class="p">(</span><span class="n">start</span> <span class="o">&lt;</span> <span class="n">end</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">mid</span> <span class="o">=</span> <span class="n">partition</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">start</span><span class="p">,</span><span class="n">end</span><span class="p">);</span>
+        <span class="n">qsort</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">start</span><span class="p">,</span><span class="n">mid</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="n">qsort</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span><span class="n">end</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
 </code></pre></div>
 <p><strong>6、mergesort</strong>
 Merge的最坏情况，需要进行n次比较与n次移动。
         最好情况，进行n次移动+比较。
 最好情况：已排好序，不用移动，仅比较 nlogn
 最坏情况：一直都是merge的最坏情况，分组每次都是平均分的，故分logn次，所以也是nlogn</p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">//[start:mid]是array1，[mid+1:end]是array2 
-void merge(unsigned long *a,int start,int mid,int end,unsigned long *res)
-{
-    int frsize = mid - start;
-    unsigned long temp[1000];
-    int j = mid + 1;
-    int i = start;
-    int k = 0;
-    while((i &lt;= mid) &amp;&amp; (j &lt;= end))
-    {
-        if(a[i]  &gt; a[j])
-            temp[k++] = a[j++];
-        else
-            temp[k++] = a[i++];
-    }
-    if(i == mid + 1)//first array finishes first
-        for(int m = j; m &lt;= end; m++)
-            temp[k++] = a[m];
-    else//second finishes first
-        for(int m = i; m &lt;= mid; m++)
-            temp[k++] = a[m];
-    for(int i = 0; i &lt;=  end; i++)
-        res[i] = temp[i];
-}
+<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="c1">//[start:mid]是array1，[mid+1:end]是array2 </span>
+<span class="kt">void</span> <span class="nf">merge</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span><span class="kt">int</span> <span class="n">start</span><span class="p">,</span><span class="kt">int</span> <span class="n">mid</span><span class="p">,</span><span class="kt">int</span> <span class="n">end</span><span class="p">,</span><span class="kt">unsigned</span> <span class="kt">long</span> <span class="o">*</span><span class="n">res</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">frsize</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">-</span> <span class="n">start</span><span class="p">;</span>
+    <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">temp</span><span class="p">[</span><span class="mi">1000</span><span class="p">];</span>
+    <span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">start</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">while</span><span class="p">((</span><span class="n">i</span> <span class="o">&lt;=</span> <span class="n">mid</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">j</span> <span class="o">&lt;=</span> <span class="n">end</span><span class="p">))</span>
+    <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>  <span class="o">&gt;</span> <span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+            <span class="n">temp</span><span class="p">[</span><span class="n">k</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="o">++</span><span class="p">];</span>
+        <span class="k">else</span>
+            <span class="n">temp</span><span class="p">[</span><span class="n">k</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="c1">//first array finishes first</span>
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">m</span> <span class="o">=</span> <span class="n">j</span><span class="p">;</span> <span class="n">m</span> <span class="o">&lt;=</span> <span class="n">end</span><span class="p">;</span> <span class="n">m</span><span class="o">++</span><span class="p">)</span>
+            <span class="n">temp</span><span class="p">[</span><span class="n">k</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">m</span><span class="p">];</span>
+    <span class="k">else</span><span class="c1">//second finishes first</span>
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">m</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span> <span class="n">m</span> <span class="o">&lt;=</span> <span class="n">mid</span><span class="p">;</span> <span class="n">m</span><span class="o">++</span><span class="p">)</span>
+            <span class="n">temp</span><span class="p">[</span><span class="n">k</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">m</span><span class="p">];</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span>  <span class="n">end</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">res</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">temp</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+<span class="p">}</span>
 
-void mergesort(unsigned long *a ,int start,int end)
-{
-    if(start &lt; end)
-    {
-        int i = (start + end) / 2;
-        mergesort(a,start,i);
-        mergesort(a,i + 1,end);
-        merge(a,start,i,end,a);
-    }
-}
+<span class="kt">void</span> <span class="nf">mergesort</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span> <span class="o">*</span><span class="n">a</span> <span class="p">,</span><span class="kt">int</span> <span class="n">start</span><span class="p">,</span><span class="kt">int</span> <span class="n">end</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">start</span> <span class="o">&lt;</span> <span class="n">end</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="p">(</span><span class="n">start</span> <span class="o">+</span> <span class="n">end</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+        <span class="n">mergesort</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">start</span><span class="p">,</span><span class="n">i</span><span class="p">);</span>
+        <span class="n">mergesort</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span><span class="n">end</span><span class="p">);</span>
+        <span class="n">merge</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">start</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">end</span><span class="p">,</span><span class="n">a</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
 </code></pre></div>
 <p><strong>归并排序与快速排序比较：归并的merge要开额外的空间，而快排的partition可以原地进行！</strong></p>
 
 <p><strong>7.堆排序</strong>
 堆排序主要需要建立堆，通过heapify（int *a,int start,int num）操作将堆建立，然后每次取出根节点并将其移除后再将余下num-1个数用heapify操作建立堆。heapify操作一次复杂度为logn，一共n次heapify操作，复杂度O（nlogn）。其为不稳定排序算法。是就地排序，只需要O（1）的空间。</p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">#include &quot;heap.h&quot;
+<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="cp">#include &quot;heap.h&quot;</span>
 
-using namespace std;
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
 
-//a数组有效元素为a[1]-a[num].
-void heap::min_heapify(int *a, int p,int num)
-{
-    int lchild = 2 * p, rchild = 2 * p + 1;
-    int temp;
-    if (lchild &gt; num)//已经到叶子节点
-        return;
-    else if (rchild &gt; num)
-    {
-        if (a[lchild] &lt; a[p])
-        {
-            temp = a[p];
-            a[p] = a[lchild];
-            a[lchild] = temp;
-        }
-        return;
-    }
+<span class="c1">//a数组有效元素为a[1]-a[num].</span>
+<span class="kt">void</span> <span class="n">heap</span><span class="o">::</span><span class="n">min_heapify</span><span class="p">(</span><span class="kt">int</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">p</span><span class="p">,</span><span class="kt">int</span> <span class="n">num</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">lchild</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">p</span><span class="p">,</span> <span class="n">rchild</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">p</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">temp</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">lchild</span> <span class="o">&gt;</span> <span class="n">num</span><span class="p">)</span><span class="c1">//已经到叶子节点</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="k">else</span> <span class="nf">if</span> <span class="p">(</span><span class="n">rchild</span> <span class="o">&gt;</span> <span class="n">num</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">lchild</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">a</span><span class="p">[</span><span class="n">p</span><span class="p">])</span>
+        <span class="p">{</span>
+            <span class="n">temp</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">p</span><span class="p">];</span>
+            <span class="n">a</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">lchild</span><span class="p">];</span>
+            <span class="n">a</span><span class="p">[</span><span class="n">lchild</span><span class="p">]</span> <span class="o">=</span> <span class="n">temp</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
 
-    min_heapify(a, 2 * p, num);
-    min_heapify(a, 2 * p + 1, num);
+    <span class="n">min_heapify</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">p</span><span class="p">,</span> <span class="n">num</span><span class="p">);</span>
+    <span class="n">min_heapify</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">p</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">num</span><span class="p">);</span>
 
-    int min;
-    if (a[lchild] &lt; a[rchild])
-        min = lchild;
-    else
-        min = rchild;
-    if (a[min] &lt; a[p])
-    {
-        temp = a[p];
-        a[p] = a[min];
-        a[min] = temp;
-    }
-}
+    <span class="kt">int</span> <span class="n">min</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">lchild</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">a</span><span class="p">[</span><span class="n">rchild</span><span class="p">])</span>
+        <span class="n">min</span> <span class="o">=</span> <span class="n">lchild</span><span class="p">;</span>
+    <span class="k">else</span>
+        <span class="n">min</span> <span class="o">=</span> <span class="n">rchild</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">min</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">a</span><span class="p">[</span><span class="n">p</span><span class="p">])</span>
+    <span class="p">{</span>
+        <span class="n">temp</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">p</span><span class="p">];</span>
+        <span class="n">a</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">min</span><span class="p">];</span>
+        <span class="n">a</span><span class="p">[</span><span class="n">min</span><span class="p">]</span> <span class="o">=</span> <span class="n">temp</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
 
 
-void heap::min_heapsort(int *a, int num)
-{
-    for (int i = num; i &gt;= 1; i--)
-    {
-        min_heapify(a, 1, i);
-        int temp = a[i];
-        a[i] = a[1];
-        a[1] = temp;    
-    }
-}
+<span class="kt">void</span> <span class="n">heap</span><span class="o">::</span><span class="n">min_heapsort</span><span class="p">(</span><span class="kt">int</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">num</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">num</span><span class="p">;</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span><span class="o">--</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">min_heapify</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">i</span><span class="p">);</span>
+        <span class="kt">int</span> <span class="n">temp</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+        <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+        <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">temp</span><span class="p">;</span>    
+    <span class="p">}</span>
+<span class="p">}</span>
 </code></pre></div>
 <p><strong>8、桶排序</strong>
 此排序是为了优化计数排序的空间太大问题，通过将数组的数据全部归一化到[0,1)之间，然后建立m个区间分别为[0,1/m)、[1/m,2/m)、……[m-1/m,1)的bucket，每个桶都是一个链表，将归一化的数据放入到对应的桶中，然后对每个桶进行排序（用qsort、insertsort.etc都行），然后按顺序输出即可。
 <img src="http://img.blog.csdn.net/20150407201233605" alt="这里写图片描述"></p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">void bucketsort(unsigned long *a,int num,int m)
-{
-    double data[1000];
-    unsigned long max = 0;
-    vector&lt;double&gt; bucket[20];
-    float seg = 1.0 / m;
-    for(int i = 0; i &lt; num; i++)
-    {
-        if(max &lt; a[i])
-            max = a[i];
-    }
-    max = max + 100;
-    for(int i = 0; i &lt; num; i++)
-    {
-        data[i] = (double)a[i] / max;
-        for(int j = 0; j &lt; m; j++)//放桶里 
-        {
-            if(data[i] &gt;= seg * j &amp;&amp; data[i] &lt;= seg * (j + 1))
-            {
-                bucket[j].push_back(data[i]);
-                break;
-            }
-        }
-    }
-    for(int i = 0; i &lt; m; i++)
-        sort(bucket[i].begin(),bucket[i].end());
-    int base = 0;
+<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="kt">void</span> <span class="nf">bucketsort</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span><span class="kt">int</span> <span class="n">num</span><span class="p">,</span><span class="kt">int</span> <span class="n">m</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">double</span> <span class="n">data</span><span class="p">[</span><span class="mi">1000</span><span class="p">];</span>
+    <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">max</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span> <span class="n">bucket</span><span class="p">[</span><span class="mi">20</span><span class="p">];</span>
+    <span class="kt">float</span> <span class="n">seg</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">m</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">num</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">max</span> <span class="o">&lt;</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">max</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="n">max</span> <span class="o">=</span> <span class="n">max</span> <span class="o">+</span> <span class="mi">100</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">num</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="kt">double</span><span class="p">)</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="n">max</span><span class="p">;</span>
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">m</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span><span class="c1">//放桶里 </span>
+        <span class="p">{</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">seg</span> <span class="o">*</span> <span class="n">j</span> <span class="o">&amp;&amp;</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">seg</span> <span class="o">*</span> <span class="p">(</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="p">{</span>
+                <span class="n">bucket</span><span class="p">[</span><span class="n">j</span><span class="p">].</span><span class="n">push_back</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">m</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">sort</span><span class="p">(</span><span class="n">bucket</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">begin</span><span class="p">(),</span><span class="n">bucket</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">end</span><span class="p">());</span>
+    <span class="kt">int</span> <span class="n">base</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
-    for(int i = 0; i &lt; m; i++)
-    {
-        for(int j = 0; j &lt; bucket[i].size(); j++)
-            a[base++] = (bucket[i])[j] * max;
-    }
-}
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">m</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">bucket</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">size</span><span class="p">();</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+            <span class="n">a</span><span class="p">[</span><span class="n">base</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">bucket</span><span class="p">[</span><span class="n">i</span><span class="p">])[</span><span class="n">j</span><span class="p">]</span> <span class="o">*</span> <span class="n">max</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
 </code></pre></div>
 <p>复杂度分析：
 在做出数据落入每个bucket都是等可能的情况下，我们可以看到T() = O(n) + 每个桶排序时间总和，两边同时取期望，然后可以证明，排序时间的期望（用insertsort）为：n * (2 - 1/n).最终桶排序复杂度为O（n）。</p>
 
 <p><strong>9、基数排序</strong></p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">void radixsort(unsigned long *a,int num)
-{
-    vector&lt;int&gt; radix[10];//装每次排序后的序列 
-    int allzero = 0;
-    unsigned long temp[1000];
+<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="kt">void</span> <span class="nf">radixsort</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span><span class="kt">int</span> <span class="n">num</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">radix</span><span class="p">[</span><span class="mi">10</span><span class="p">];</span><span class="c1">//装每次排序后的序列 </span>
+    <span class="kt">int</span> <span class="n">allzero</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">temp</span><span class="p">[</span><span class="mi">1000</span><span class="p">];</span>
 
-    int step = 1;
+    <span class="kt">int</span> <span class="n">step</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
 
-    while(!allzero)
-    {
-        allzero = 1;
-        for(int i = 0; i &lt; num; i++)
-        {
-            int digit = a[i] % (int)pow(10,step);
-            digit /= (int)pow(10,step - 1);
-            radix[digit].push_back(i);
-            if(digit &gt; 0)
-                allzero = 0;
-        }
-        int k = 0;
-        for(int i = 0; i &lt; 10; i++)//按照序列顺序输出即可 
-        {
-            for(int j = 0; j &lt; radix[i].size(); j++)
-                temp[k++] = a[(radix[i])[j]];
-            radix[i].clear();
-        }
-        for(int i = 0; i &lt; num; i++)
-            a[i] = temp[i];
-        step++;
-    }
-}
+    <span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">allzero</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">allzero</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">num</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="kt">int</span> <span class="n">digit</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">%</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">pow</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="n">step</span><span class="p">);</span>
+            <span class="n">digit</span> <span class="o">/=</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">pow</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="n">step</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
+            <span class="n">radix</span><span class="p">[</span><span class="n">digit</span><span class="p">].</span><span class="n">push_back</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">digit</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="n">allzero</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="c1">//按照序列顺序输出即可 </span>
+        <span class="p">{</span>
+            <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">radix</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">size</span><span class="p">();</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+                <span class="n">temp</span><span class="p">[</span><span class="n">k</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[(</span><span class="n">radix</span><span class="p">[</span><span class="n">i</span><span class="p">])[</span><span class="n">j</span><span class="p">]];</span>
+            <span class="n">radix</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">clear</span><span class="p">();</span>
+        <span class="p">}</span>
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">num</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+            <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">temp</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+        <span class="n">step</span><span class="o">++</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
 </code></pre></div>
     <nav class="article-previous fn-clear">
         

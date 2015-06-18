@@ -9,6 +9,7 @@ comments: true
 该算法对图像的每一个像素位置建立一个码本(codebook),每一个码本有多个码元（ce）多通道的，每一个码元都有自己的lowbound和upbound。在学习时候，对于每一张图片中的每一个像素，进行相应的码本匹配，如果像素值在码本中某码元的bound范围之内，那么只需要更新该码元的bound即可。如果在对应的码本中没有匹配的码元，那么证明背景是动态的，需要在此像素点的码本中建立新的码元。因此，在背景学习的过程中，每个像素点可以对应多个码元，这样就可以学到复杂的动态背景。
 1、学习过程
 2、检测过程
+
 ```c++
 
 maxMod[n]：用训练好的背景模型进行前景检测时用到，判断点是否小于max[n] + maxMod[n])。
@@ -28,10 +29,9 @@ min[n]： 背景学习过程中每个码元学习到的最小值，在前景分�
 high[n]：背景学习过程中用来调整learnHigh[n]的，如果learnHigh[n]<high[n],则learnHigh[n]缓慢加1
 
 low[n]： 背景学习过程中用来调整learnLow[n]的，如果learnLow[n]>Low[n],则learnLow[缓慢减1
-
-
 ```
 
+***数据结构：***
 ```c++
 
 typedef struct ce {
@@ -48,7 +48,6 @@ typedef struct code_book {
 	int             numEntries;     // 此码本中码元的数目
 	int             t;              // 此码本现在的时间,一帧为一个时间单位
 } codeBook;                         //每个像素点位置有一个码本
-
 
 ```
 
@@ -201,7 +200,8 @@ void Codebook::learn(Mat frame)
 如果当前像素值（x = （*p））在codebook中找到一个码元cb[i],使得每一通道x的值都在cb[i]的[learnLow[n] , learnHigh[n]]区间，那么就不用增加码元，需检查当前的像素值是否为match的码元的最大值或者最小值，并进行更新，此外还要对learnLow[n] , learnHigh[n]也进行缓慢的调整：
 
 检查是否有匹配码元：
-```
+
+```c++
 int matchChannel;
 	int i;
 	for (i = 0; i<c.numEntries; i++)
@@ -229,8 +229,10 @@ int matchChannel;
 		}
 	}
 ```
+
 如果找到匹配码元，即每个通道的值都在范围内
-```
+
+```c++
 		if (matchChannel == numChannels)        // If an entry was found over all channels
 		{
 			c.cb[i]->t_last_update = c.t;
@@ -245,8 +247,10 @@ int matchChannel;
 			break;
 		}
 ```
+
 缓慢调整的规则：比较 x像素值cvbounds领域与learnLow[n] , learnHigh[n]的大小。如果learnLow[n] > x - cvbounds，那么 learnLow- -；
-```
+
+```c++
 	// SLOWLY ADJUST LEARNING BOUNDS
 	for (n = 0; n<numChannels; n++)
 		//如果像素通道数据在高低阀值范围内,但在码元阀值之外,则缓慢调整此码元学习界限
@@ -271,7 +275,7 @@ int matchChannel;
 ```
 然后需要进行码元的回收判断，当一个码元在训练的时候长期没有被访问到（stale为最长不访问的时间），那么证明该码元已经不适用，那么我们可以把它删掉，以减少内存消耗。更新最长未访问时间：
 
-```
+```c++
 	for (int s = 0; s<c.numEntries; s++)
 	{
 		// This garbage is to track which codebook entries are going stale
@@ -283,7 +287,7 @@ int matchChannel;
 ```
 ps：《学习opencv》给的代码中cvupdateCodeBook()有问题：原来给的是unsigned int，应该改为int。
 
-```
+```c++
 'unsigned' int high[3], low[3];//应该是int 不是unsigned int，不然如果有0、0、0那么low不会小于0！！
 for (n = 0; n<numChannels; n++)
 {
@@ -300,7 +304,7 @@ for (n = 0; n<numChannels; n++)
 此操作只在背景学习结束后马上执行，且仅执行一次。
 其中认为outdate的时间阈值为学习总时间的一半： 'staleThresh = c.t >> 1'
 
-```
+```c++
 int Codebook::cvclearStaleEntries(codeBook &c)//返回删除的码元个数
 {
 	int staleThresh = c.t >> 1;
@@ -349,16 +353,15 @@ int Codebook::cvclearStaleEntries(codeBook &c)//返回删除的码元个数
 和学习时候对码元是否已经存在类似，规则如下：
 对于检测图片，扫描每个像素，当前像素值x在当前码本中找到一个码元，使得x属于当前码元的[min[n] - minMod[n],max[n] + maxMod[n]],那么认为是背景，否则为前景。
 
-```
+```c++
 for (int c = 0; c<imageLen; c++)
 	{
 		maskPixelCodeBook = cvbackgroundDiff(pColor, cB[c], nChannels, minMod, maxMod);
 		*pMask++ = maskPixelCodeBook;
 		pColor += 3;
 	}
-```
 
-```
+
 uchar Codebook::cvbackgroundDiff(uchar *p, codeBook &c, int numChannels, int *minMod, int *maxMod)
 {
 	int matchChannel;
@@ -387,7 +390,7 @@ uchar Codebook::cvbackgroundDiff(uchar *p, codeBook &c, int numChannels, int *mi
 
 **在检测的过程中我们也可以持续的更新codebook，即延时nGapFrame帧然后用其进行训练，并且在训练部分后进行codebook冗余的删除，这样对于运动的检测会更加准确。**
 
-```
+```c++
 //动态更新背景,延时nGapFrame帧
 if (StartUpdate)
 {
@@ -427,7 +430,7 @@ if (iterInTest % nGapFrame == 0)
 ***提取运动物体***
 通过寻找连通域并且进行形态学的处理来提取运动物体：
 
-```
+```c++
 Mat Codebook::cvconnectedComponents(IplImage *mask, int poly1_hull0, float perimScale,Mat frame)
 {
 	static CvMemStorage*    mem_storage = NULL;

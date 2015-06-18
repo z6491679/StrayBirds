@@ -135,65 +135,66 @@
     </div>
     <p>该算法对图像的每一个像素位置建立一个码本(codebook),每一个码本有多个码元（ce）多通道的，每一个码元都有自己的lowbound和upbound。在学习时候，对于每一张图片中的每一个像素，进行相应的码本匹配，如果像素值在码本中某码元的bound范围之内，那么只需要更新该码元的bound即可。如果在对应的码本中没有匹配的码元，那么证明背景是动态的，需要在此像素点的码本中建立新的码元。因此，在背景学习的过程中，每个像素点可以对应多个码元，这样就可以学到复杂的动态背景。
 1、学习过程
-2、检测过程
+2、检测过程</p>
+<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="n">maxMod</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="err">：用训练好的背景模型进行前景检测时用到，判断点是否小于</span><span class="n">max</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="n">maxMod</span><span class="p">[</span><span class="n">n</span><span class="p">])</span><span class="err">。</span>
+
+<span class="n">minMod</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="err">：用训练好的背景模型进行前景检测时用到，判断点是否小于</span><span class="n">min</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">-</span><span class="n">minMod</span><span class="p">[</span><span class="n">n</span><span class="p">])</span><span class="err">。</span>
+
+<span class="n">cbBounds</span><span class="o">*</span><span class="err">：训练背景模型时用到，可以手动输入该参数，这个数主要是配合</span><span class="n">high</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="err">和</span><span class="n">low</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="err">来用的。</span>
+
+<span class="n">learnHigh</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="err">：背景学习过程中当一个新像素来时用来判断是否在已有的码元中，是阈值的上界部分。</span>
+
+<span class="n">learnLow</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="err">：背景学习过程中当一个新像素来时用来判断是否在已有的码元中，是阈值的下界部分。</span>
+
+<span class="n">max</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="err">：</span> <span class="err">背景学习过程中每个码元学习到的最大值，在前景分割时配合</span><span class="n">maxMod</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="err">用的。</span>
+
+<span class="n">min</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="err">：</span> <span class="err">背景学习过程中每个码元学习到的最小值，在前景分割时配合</span><span class="n">minMod</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="err">用的。</span>
+
+<span class="n">high</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="err">：背景学习过程中用来调整</span><span class="n">learnHigh</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="err">的，如果</span><span class="n">learnHigh</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">&lt;</span><span class="n">high</span><span class="p">[</span><span class="n">n</span><span class="p">],</span><span class="err">则</span><span class="n">learnHigh</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="err">缓慢加</span><span class="mi">1</span>
+
+<span class="n">low</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="err">：</span> <span class="err">背景学习过程中用来调整</span><span class="n">learnLow</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="err">的，如果</span><span class="n">learnLow</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">&gt;</span><span class="n">Low</span><span class="p">[</span><span class="n">n</span><span class="p">],</span><span class="err">则</span><span class="n">learnLow</span><span class="p">[</span><span class="err">缓慢减</span><span class="mi">1</span>
+</code></pre></div>
+<p><strong><em>数据结构：</em></strong>
 ```c++</p>
 
-<p>maxMod[n]：用训练好的背景模型进行前景检测时用到，判断点是否小于max[n] + maxMod[n])。</p>
-
-<p>minMod[n]：用训练好的背景模型进行前景检测时用到，判断点是否小于min[n] -minMod[n])。</p>
-
-<p>cbBounds*：训练背景模型时用到，可以手动输入该参数，这个数主要是配合high[n]和low[n]来用的。</p>
-
-<p>learnHigh[n]：背景学习过程中当一个新像素来时用来判断是否在已有的码元中，是阈值的上界部分。</p>
-
-<p>learnLow[n]：背景学习过程中当一个新像素来时用来判断是否在已有的码元中，是阈值的下界部分。</p>
-
-<p>max[n]： 背景学习过程中每个码元学习到的最大值，在前景分割时配合maxMod[n]用的。</p>
-
-<p>min[n]： 背景学习过程中每个码元学习到的最小值，在前景分割时配合minMod[n]用的。</p>
-
-<p>high[n]：背景学习过程中用来调整learnHigh[n]的，如果learnHigh[n]&lt;high[n],则learnHigh[n]缓慢加1</p>
-
-<p>low[n]： 背景学习过程中用来调整learnLow[n]的，如果learnLow[n]&gt;Low[n],则learnLow[缓慢减1</p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">```c++
-
-typedef struct ce {
+<p>typedef struct ce {
     uchar   learnHigh[CHANNELS];    // High side threshold for learning
     uchar   learnLow[CHANNELS];     // Low side threshold for learning
     uchar   max[CHANNELS];          // 当前码元在学习中遇到的最大像素值
     uchar   min[CHANNELS];          // 当前码元在学习中遇到的最小像素值
-    int     t_last_update;          // This is book keeping to allow us to kill stale entries
+    int     t<em>last</em>update;          // This is book keeping to allow us to kill stale entries
     int     stale;                  // max negative run (biggest period of inactivity)，记录该码元未被访问的最长时间
-} code_element;                     // 码元的数据结构
+} code_element;                     // 码元的数据结构</p>
 
-typedef struct code_book {
-    code_element    **cb;
+<p>typedef struct code<em>book {
+    code</em>element    **cb;
     int             numEntries;     // 此码本中码元的数目
     int             t;              // 此码本现在的时间,一帧为一个时间单位
-} codeBook;                         //每个像素点位置有一个码本
-</code></pre></div>
-<p><strong><em>成员初始化：</em></strong></p>
-<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="n">Codebook</span><span class="o">::</span><span class="n">Codebook</span><span class="p">()</span>
-<span class="p">{</span>
-    <span class="n">yuvImage</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span><span class="c1">//原始图像</span>
-    <span class="n">ImaskCodeBook</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
-    <span class="n">ImaskCodeBookCC</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
-    <span class="n">cB</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
-    <span class="n">pColor</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span> <span class="c1">//YUV pointer</span>
-    <span class="n">imageLen</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span><span class="c1">//像素大小</span>
-    <span class="n">nChannels</span> <span class="o">=</span> <span class="n">CHANNELS</span><span class="p">;</span>
+} codeBook;                         //每个像素点位置有一个码本</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">***成员初始化：***
 
-    <span class="n">approxLevel</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span><span class="c1">//</span>
-    <span class="n">closeIter</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
-    <span class="n">maxIterInLearn</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
-    <span class="n">tolerance</span> <span class="o">=</span> <span class="mi">30</span><span class="p">;</span><span class="c1">//进行检测时候的上下波动值</span>
-    <span class="n">perimScale</span> <span class="o">=</span> <span class="mf">7.5</span><span class="p">;</span><span class="c1">//连通域删选的周长倍数阈值</span>
-    <span class="n">isFirstRun</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
-    <span class="n">iterInLearn</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-    <span class="n">isNewFrame</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+```c++
+Codebook::Codebook()
+{
+    yuvImage = NULL;//原始图像
+    ImaskCodeBook = NULL;
+    ImaskCodeBookCC = NULL;
+    cB = NULL;
+    pColor = NULL; //YUV pointer
+    imageLen = 0;//像素大小
+    nChannels = CHANNELS;
 
-    <span class="n">isShowMask</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
-<span class="p">}</span>
+    approxLevel = 0;//
+    closeIter = 2;
+    maxIterInLearn = 100;
+    tolerance = 30;//进行检测时候的上下波动值
+    perimScale = 7.5;//连通域删选的周长倍数阈值
+    isFirstRun = true;
+    iterInLearn = 1;
+    isNewFrame = false;
+
+    isShowMask = false;
+}
 </code></pre></div>
 <p><strong><em>主程序</em></strong></p>
 <div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
@@ -304,66 +305,62 @@ return 1;
 
 <p>如果当前像素值（x = （*p））在codebook中找到一个码元cb[i],使得每一通道x的值都在cb[i]的[learnLow[n] , learnHigh[n]]区间，那么就不用增加码元，需检查当前的像素值是否为match的码元的最大值或者最小值，并进行更新，此外还要对learnLow[n] , learnHigh[n]也进行缓慢的调整：</p>
 
-<p>检查是否有匹配码元：
-<code>
-int matchChannel;
-    int i;
-    for (i = 0; i&lt;c.numEntries; i++)
-    {
-        matchChannel = 0;
-        for (n = 0; n&lt;numChannels; n++)
-        {
-            if ((c.cb[i]-&gt;learnLow[n] &lt;= *(p + n)) &amp;&amp; (*(p + n) &lt;= c.cb[i]-&gt;learnHigh[n])) //Found an entry for this channel
-            {
-                matchChannel++;
-            }
-        }
-        if (matchChannel == numChannels)        // If an entry was found over all channels
-        {
-            c.cb[i]-&gt;t_last_update = c.t;
-            // adjust this codeword for the first channel
-            for (n = 0; n&lt;numChannels; n++)
-            {
-                if (c.cb[i]-&gt;max[n] &lt; *(p + n))
-                    c.cb[i]-&gt;max[n] = *(p + n);
-                else if (c.cb[i]-&gt;min[n] &gt; *(p + n))
-                    c.cb[i]-&gt;min[n] = *(p + n);
-            }
-            break;
-        }
-    }
-</code>
-如果找到匹配码元，即每个通道的值都在范围内
-<code>
-        if (matchChannel == numChannels)        // If an entry was found over all channels
-        {
-            c.cb[i]-&gt;t_last_update = c.t;
-            // adjust this codeword for the first channel
-            for (n = 0; n&lt;numChannels; n++)
-            {
-                if (c.cb[i]-&gt;max[n] &lt; *(p + n))
-                    c.cb[i]-&gt;max[n] = *(p + n);
-                else if (c.cb[i]-&gt;min[n] &gt; *(p + n))
-                    c.cb[i]-&gt;min[n] = *(p + n);
-            }
-            break;
-        }
-</code>
-缓慢调整的规则：比较 x像素值cvbounds领域与learnLow[n] , learnHigh[n]的大小。如果learnLow[n] &gt; x - cvbounds，那么 learnLow- -；
-<code>
-    // SLOWLY ADJUST LEARNING BOUNDS
-    for (n = 0; n&lt;numChannels; n++)
-        //如果像素通道数据在高低阀值范围内,但在码元阀值之外,则缓慢调整此码元学习界限
-        //也就是像素命中码元了（若没有命中就会新建，就learnHigh[n] == high[n]）
-        //要命中，而且码元的阈值不是特别大（与像素值的差不足cvBounds）时就扩大码元学习限
-    {
-        if (c.cb[i]-&gt;learnHigh[n] &lt; high[n])
-            c.cb[i]-&gt;learnHigh[n] += 1;
-        if (c.cb[i]-&gt;learnLow[n] &gt; low[n])
-            c.cb[i]-&gt;learnLow[n] -= 1;
-    }
-</code></p>
-
+<p>检查是否有匹配码元：</p>
+<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="kt">int</span> <span class="n">matchChannel</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">c</span><span class="p">.</span><span class="n">numEntries</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">matchChannel</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">n</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">n</span><span class="o">&lt;</span><span class="n">numChannels</span><span class="p">;</span> <span class="n">n</span><span class="o">++</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">if</span> <span class="p">((</span><span class="n">c</span><span class="p">.</span><span class="n">cb</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">learnLow</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="o">*</span><span class="p">(</span><span class="n">p</span> <span class="o">+</span> <span class="n">n</span><span class="p">))</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">p</span> <span class="o">+</span> <span class="n">n</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">c</span><span class="p">.</span><span class="n">cb</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">learnHigh</span><span class="p">[</span><span class="n">n</span><span class="p">]))</span> <span class="c1">//Found an entry for this channel</span>
+            <span class="p">{</span>
+                <span class="n">matchChannel</span><span class="o">++</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">matchChannel</span> <span class="o">==</span> <span class="n">numChannels</span><span class="p">)</span>        <span class="c1">// If an entry was found over all channels</span>
+        <span class="p">{</span>
+            <span class="n">c</span><span class="p">.</span><span class="n">cb</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">t_last_update</span> <span class="o">=</span> <span class="n">c</span><span class="p">.</span><span class="n">t</span><span class="p">;</span>
+            <span class="c1">// adjust this codeword for the first channel</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">n</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">n</span><span class="o">&lt;</span><span class="n">numChannels</span><span class="p">;</span> <span class="n">n</span><span class="o">++</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">c</span><span class="p">.</span><span class="n">cb</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">max</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">&lt;</span> <span class="o">*</span><span class="p">(</span><span class="n">p</span> <span class="o">+</span> <span class="n">n</span><span class="p">))</span>
+                    <span class="n">c</span><span class="p">.</span><span class="n">cb</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">max</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="o">*</span><span class="p">(</span><span class="n">p</span> <span class="o">+</span> <span class="n">n</span><span class="p">);</span>
+                <span class="k">else</span> <span class="nf">if</span> <span class="p">(</span><span class="n">c</span><span class="p">.</span><span class="n">cb</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">min</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">&gt;</span> <span class="o">*</span><span class="p">(</span><span class="n">p</span> <span class="o">+</span> <span class="n">n</span><span class="p">))</span>
+                    <span class="n">c</span><span class="p">.</span><span class="n">cb</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">min</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="o">*</span><span class="p">(</span><span class="n">p</span> <span class="o">+</span> <span class="n">n</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+</code></pre></div>
+<p>如果找到匹配码元，即每个通道的值都在范围内</p>
+<div class="highlight"><pre><code class="language-c++" data-lang="c++">        <span class="k">if</span> <span class="p">(</span><span class="n">matchChannel</span> <span class="o">==</span> <span class="n">numChannels</span><span class="p">)</span>        <span class="c1">// If an entry was found over all channels</span>
+        <span class="p">{</span>
+            <span class="n">c</span><span class="p">.</span><span class="n">cb</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">t_last_update</span> <span class="o">=</span> <span class="n">c</span><span class="p">.</span><span class="n">t</span><span class="p">;</span>
+            <span class="c1">// adjust this codeword for the first channel</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">n</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">n</span><span class="o">&lt;</span><span class="n">numChannels</span><span class="p">;</span> <span class="n">n</span><span class="o">++</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">c</span><span class="p">.</span><span class="n">cb</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">max</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">&lt;</span> <span class="o">*</span><span class="p">(</span><span class="n">p</span> <span class="o">+</span> <span class="n">n</span><span class="p">))</span>
+                    <span class="n">c</span><span class="p">.</span><span class="n">cb</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">max</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="o">*</span><span class="p">(</span><span class="n">p</span> <span class="o">+</span> <span class="n">n</span><span class="p">);</span>
+                <span class="k">else</span> <span class="nf">if</span> <span class="p">(</span><span class="n">c</span><span class="p">.</span><span class="n">cb</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">min</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">&gt;</span> <span class="o">*</span><span class="p">(</span><span class="n">p</span> <span class="o">+</span> <span class="n">n</span><span class="p">))</span>
+                    <span class="n">c</span><span class="p">.</span><span class="n">cb</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">min</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="o">*</span><span class="p">(</span><span class="n">p</span> <span class="o">+</span> <span class="n">n</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="p">}</span>
+</code></pre></div>
+<p>缓慢调整的规则：比较 x像素值cvbounds领域与learnLow[n] , learnHigh[n]的大小。如果learnLow[n] &gt; x - cvbounds，那么 learnLow- -；</p>
+<div class="highlight"><pre><code class="language-c++" data-lang="c++">    <span class="c1">// SLOWLY ADJUST LEARNING BOUNDS</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">n</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">n</span><span class="o">&lt;</span><span class="n">numChannels</span><span class="p">;</span> <span class="n">n</span><span class="o">++</span><span class="p">)</span>
+        <span class="c1">//如果像素通道数据在高低阀值范围内,但在码元阀值之外,则缓慢调整此码元学习界限</span>
+        <span class="c1">//也就是像素命中码元了（若没有命中就会新建，就learnHigh[n] == high[n]）</span>
+        <span class="c1">//要命中，而且码元的阈值不是特别大（与像素值的差不足cvBounds）时就扩大码元学习限</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">c</span><span class="p">.</span><span class="n">cb</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">learnHigh</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">high</span><span class="p">[</span><span class="n">n</span><span class="p">])</span>
+            <span class="n">c</span><span class="p">.</span><span class="n">cb</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">learnHigh</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">c</span><span class="p">.</span><span class="n">cb</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">learnLow</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">low</span><span class="p">[</span><span class="n">n</span><span class="p">])</span>
+            <span class="n">c</span><span class="p">.</span><span class="n">cb</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">learnLow</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">-=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+</code></pre></div>
 <p>如果当前没有匹配的码元，那么需要给此像素的码本增加新的码元：</p>
 <div class="highlight"><pre><code class="language-c++" data-lang="c++">        <span class="n">learnHigh</span><span class="p">[</span><span class="n">CHANNELS</span><span class="p">]</span> <span class="o">=</span> <span class="o">*</span><span class="p">(</span><span class="n">p</span> <span class="o">+</span> <span class="n">n</span><span class="p">)</span> <span class="o">+</span> <span class="o">*</span><span class="p">(</span><span class="n">cbBounds</span> <span class="o">+</span> <span class="n">n</span><span class="p">)</span><span class="err">；</span><span class="c1">//当前像素值+cbBounds </span>
         <span class="n">learnLow</span><span class="p">[</span><span class="n">CHANNELS</span><span class="p">]</span> <span class="o">=</span> <span class="o">*</span><span class="p">(</span><span class="n">p</span> <span class="o">+</span> <span class="n">n</span><span class="p">)</span> <span class="o">-</span> <span class="o">*</span><span class="p">(</span><span class="n">cbBounds</span> <span class="o">+</span> <span class="n">n</span><span class="p">);</span><span class="c1">//当前像素值-cbBounds     </span>
@@ -372,190 +369,192 @@ int matchChannel;
         <span class="n">t_last_update</span>  <span class="o">=</span>     <span class="n">c</span><span class="p">.</span><span class="n">t</span>                        <span class="c1">//当前时间</span>
 </code></pre></div>
 <p>然后需要进行码元的回收判断，当一个码元在训练的时候长期没有被访问到（stale为最长不访问的时间），那么证明该码元已经不适用，那么我们可以把它删掉，以减少内存消耗。更新最长未访问时间：</p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">    for (int s = 0; s&lt;c.numEntries; s++)
-    {
-        // This garbage is to track which codebook entries are going stale
-        int negRun = c.t - c.cb[s]-&gt;t_last_update;
+<div class="highlight"><pre><code class="language-c++" data-lang="c++">    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">s</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">s</span><span class="o">&lt;</span><span class="n">c</span><span class="p">.</span><span class="n">numEntries</span><span class="p">;</span> <span class="n">s</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">// This garbage is to track which codebook entries are going stale</span>
+        <span class="kt">int</span> <span class="n">negRun</span> <span class="o">=</span> <span class="n">c</span><span class="p">.</span><span class="n">t</span> <span class="o">-</span> <span class="n">c</span><span class="p">.</span><span class="n">cb</span><span class="p">[</span><span class="n">s</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">t_last_update</span><span class="p">;</span>
 
-        if (c.cb[s]-&gt;stale &lt; negRun)
-            c.cb[s]-&gt;stale = negRun;
-    }
+        <span class="k">if</span> <span class="p">(</span><span class="n">c</span><span class="p">.</span><span class="n">cb</span><span class="p">[</span><span class="n">s</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">stale</span> <span class="o">&lt;</span> <span class="n">negRun</span><span class="p">)</span>
+            <span class="n">c</span><span class="p">.</span><span class="n">cb</span><span class="p">[</span><span class="n">s</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">stale</span> <span class="o">=</span> <span class="n">negRun</span><span class="p">;</span>
+    <span class="p">}</span>
 </code></pre></div>
 <p>ps：《学习opencv》给的代码中cvupdateCodeBook()有问题：原来给的是unsigned int，应该改为int。</p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">&#39;unsigned&#39; int high[3], low[3];//应该是int 不是unsigned int，不然如果有0、0、0那么low不会小于0！！
-for (n = 0; n&lt;numChannels; n++)
-{
-    high[n] = *(p + n) + *(cbBounds + n);
-    if (high[n] &gt; 255) high[n] = 255;
-    low[n] = *(p + n) - *(cbBounds + n);
-    if (low[n] &lt; 0) low[n] = 0;
-}
+<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="err">&#39;</span><span class="kt">unsigned</span><span class="err">&#39;</span> <span class="kt">int</span> <span class="n">high</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">low</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span><span class="c1">//应该是int 不是unsigned int，不然如果有0、0、0那么low不会小于0！！</span>
+<span class="k">for</span> <span class="p">(</span><span class="n">n</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">n</span><span class="o">&lt;</span><span class="n">numChannels</span><span class="p">;</span> <span class="n">n</span><span class="o">++</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">high</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="o">*</span><span class="p">(</span><span class="n">p</span> <span class="o">+</span> <span class="n">n</span><span class="p">)</span> <span class="o">+</span> <span class="o">*</span><span class="p">(</span><span class="n">cbBounds</span> <span class="o">+</span> <span class="n">n</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">high</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">255</span><span class="p">)</span> <span class="n">high</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="mi">255</span><span class="p">;</span>
+    <span class="n">low</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="o">*</span><span class="p">(</span><span class="n">p</span> <span class="o">+</span> <span class="n">n</span><span class="p">)</span> <span class="o">-</span> <span class="o">*</span><span class="p">(</span><span class="n">cbBounds</span> <span class="o">+</span> <span class="n">n</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">low</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="n">low</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
 </code></pre></div>
 <p><strong><em>删除长期未访问的码元</em></strong>
 此操作只在背景学习结束后马上执行，且仅执行一次。
 其中认为outdate的时间阈值为学习总时间的一半： &#39;staleThresh = c.t &gt;&gt; 1&#39;</p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">int Codebook::cvclearStaleEntries(codeBook &amp;c)//返回删除的码元个数
-{
-    int staleThresh = c.t &gt;&gt; 1;
-    int *keep = new int[c.numEntries];//标记码元是否有效
-    int keepCnt = 0;//记录有效码元个数
-    //筛选未访问时间没有超过staleThresh的码元
-    for (int i = 0; i&lt;c.numEntries; i++)
-    {
-        if (c.cb[i]-&gt;stale &gt; staleThresh)
-            keep[i] = 0;
-        else
-        {
-            keep[i] = 1;
-            keepCnt += 1;
-        }
-    }
+<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="kt">int</span> <span class="n">Codebook</span><span class="o">::</span><span class="n">cvclearStaleEntries</span><span class="p">(</span><span class="n">codeBook</span> <span class="o">&amp;</span><span class="n">c</span><span class="p">)</span><span class="c1">//返回删除的码元个数</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">staleThresh</span> <span class="o">=</span> <span class="n">c</span><span class="p">.</span><span class="n">t</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="o">*</span><span class="n">keep</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="p">[</span><span class="n">c</span><span class="p">.</span><span class="n">numEntries</span><span class="p">];</span><span class="c1">//标记码元是否有效</span>
+    <span class="kt">int</span> <span class="n">keepCnt</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span><span class="c1">//记录有效码元个数</span>
+    <span class="c1">//筛选未访问时间没有超过staleThresh的码元</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">c</span><span class="p">.</span><span class="n">numEntries</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">c</span><span class="p">.</span><span class="n">cb</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">stale</span> <span class="o">&gt;</span> <span class="n">staleThresh</span><span class="p">)</span>
+            <span class="n">keep</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">else</span>
+        <span class="p">{</span>
+            <span class="n">keep</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+            <span class="n">keepCnt</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
 
-    c.t = 0;
+    <span class="n">c</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
-    //将未过期的码元建立成新的码本
-    code_element **foo = new code_element*[keepCnt];
+    <span class="c1">//将未过期的码元建立成新的码本</span>
+    <span class="n">code_element</span> <span class="o">**</span><span class="n">foo</span> <span class="o">=</span> <span class="k">new</span> <span class="n">code_element</span><span class="o">*</span><span class="p">[</span><span class="n">keepCnt</span><span class="p">];</span>
 
-    int k = 0;
-    for (int ii = 0; ii&lt;c.numEntries; ii++)
-    {
-        if (keep[ii])
-        {
-            foo[k] = c.cb[ii];
-            foo[k]-&gt;stale = 0;       //We have to refresh these entries for next clearStale
-            foo[k]-&gt;t_last_update = 0;
-            k++;
-        }
-    }
-    delete[] keep;
-    delete[] c.cb;
-    c.cb = foo;//将新码本代替原来的码本
-    int numCleared = c.numEntries - keepCnt;
-    c.numEntries = keepCnt;
-    return(numCleared);
-}
+    <span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">ii</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">ii</span><span class="o">&lt;</span><span class="n">c</span><span class="p">.</span><span class="n">numEntries</span><span class="p">;</span> <span class="n">ii</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">keep</span><span class="p">[</span><span class="n">ii</span><span class="p">])</span>
+        <span class="p">{</span>
+            <span class="n">foo</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">c</span><span class="p">.</span><span class="n">cb</span><span class="p">[</span><span class="n">ii</span><span class="p">];</span>
+            <span class="n">foo</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">stale</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>       <span class="c1">//We have to refresh these entries for next clearStale</span>
+            <span class="n">foo</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">t_last_update</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="n">k</span><span class="o">++</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">delete</span><span class="p">[]</span> <span class="n">keep</span><span class="p">;</span>
+    <span class="k">delete</span><span class="p">[]</span> <span class="n">c</span><span class="p">.</span><span class="n">cb</span><span class="p">;</span>
+    <span class="n">c</span><span class="p">.</span><span class="n">cb</span> <span class="o">=</span> <span class="n">foo</span><span class="p">;</span><span class="c1">//将新码本代替原来的码本</span>
+    <span class="kt">int</span> <span class="n">numCleared</span> <span class="o">=</span> <span class="n">c</span><span class="p">.</span><span class="n">numEntries</span> <span class="o">-</span> <span class="n">keepCnt</span><span class="p">;</span>
+    <span class="n">c</span><span class="p">.</span><span class="n">numEntries</span> <span class="o">=</span> <span class="n">keepCnt</span><span class="p">;</span>
+    <span class="k">return</span><span class="p">(</span><span class="n">numCleared</span><span class="p">);</span>
+<span class="p">}</span>
 </code></pre></div>
 <p><strong><em>前背景检测</em></strong>
 和学习时候对码元是否已经存在类似，规则如下：
 对于检测图片，扫描每个像素，当前像素值x在当前码本中找到一个码元，使得x属于当前码元的[min[n] - minMod[n],max[n] + maxMod[n]],那么认为是背景，否则为前景。</p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">for (int c = 0; c&lt;imageLen; c++)
-    {
-        maskPixelCodeBook = cvbackgroundDiff(pColor, cB[c], nChannels, minMod, maxMod);
-        *pMask++ = maskPixelCodeBook;
-        pColor += 3;
-    }
-</code></pre></div><div class="highlight"><pre><code class="language-text" data-lang="text">uchar Codebook::cvbackgroundDiff(uchar *p, codeBook &amp;c, int numChannels, int *minMod, int *maxMod)
-{
-    int matchChannel;
-    //SEE IF THIS FITS AN EXISTING CODEWORD
-    int i;
-    for (i = 0; i&lt;c.numEntries; i++)
-    {
-        matchChannel = 0;
-        for (int n = 0; n&lt;numChannels; n++)
-        {
-            if ((c.cb[i]-&gt;min[n] - minMod[n] &lt;= *(p + n)) &amp;&amp; (*(p + n) &lt;= c.cb[i]-&gt;max[n] + maxMod[n]))
-                matchChannel++; //Found an entry for this channel
-            else
-                break;
-        }
-        if (matchChannel == numChannels)
-            break; //Found an entry that matched all channels
-    }
-    if (i == c.numEntries)
-        // p像素各通道值满足码本中其中一个码元,则返回白色
-        return(255);
+<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">c</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">c</span><span class="o">&lt;</span><span class="n">imageLen</span><span class="p">;</span> <span class="n">c</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">maskPixelCodeBook</span> <span class="o">=</span> <span class="n">cvbackgroundDiff</span><span class="p">(</span><span class="n">pColor</span><span class="p">,</span> <span class="n">cB</span><span class="p">[</span><span class="n">c</span><span class="p">],</span> <span class="n">nChannels</span><span class="p">,</span> <span class="n">minMod</span><span class="p">,</span> <span class="n">maxMod</span><span class="p">);</span>
+        <span class="o">*</span><span class="n">pMask</span><span class="o">++</span> <span class="o">=</span> <span class="n">maskPixelCodeBook</span><span class="p">;</span>
+        <span class="n">pColor</span> <span class="o">+=</span> <span class="mi">3</span><span class="p">;</span>
+    <span class="p">}</span>
 
-    return(0);
-}
+
+<span class="n">uchar</span> <span class="n">Codebook</span><span class="o">::</span><span class="n">cvbackgroundDiff</span><span class="p">(</span><span class="n">uchar</span> <span class="o">*</span><span class="n">p</span><span class="p">,</span> <span class="n">codeBook</span> <span class="o">&amp;</span><span class="n">c</span><span class="p">,</span> <span class="kt">int</span> <span class="n">numChannels</span><span class="p">,</span> <span class="kt">int</span> <span class="o">*</span><span class="n">minMod</span><span class="p">,</span> <span class="kt">int</span> <span class="o">*</span><span class="n">maxMod</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">matchChannel</span><span class="p">;</span>
+    <span class="c1">//SEE IF THIS FITS AN EXISTING CODEWORD</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">c</span><span class="p">.</span><span class="n">numEntries</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">matchChannel</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">n</span><span class="o">&lt;</span><span class="n">numChannels</span><span class="p">;</span> <span class="n">n</span><span class="o">++</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">if</span> <span class="p">((</span><span class="n">c</span><span class="p">.</span><span class="n">cb</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">min</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">-</span> <span class="n">minMod</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="o">*</span><span class="p">(</span><span class="n">p</span> <span class="o">+</span> <span class="n">n</span><span class="p">))</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">p</span> <span class="o">+</span> <span class="n">n</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">c</span><span class="p">.</span><span class="n">cb</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">max</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="n">maxMod</span><span class="p">[</span><span class="n">n</span><span class="p">]))</span>
+                <span class="n">matchChannel</span><span class="o">++</span><span class="p">;</span> <span class="c1">//Found an entry for this channel</span>
+            <span class="k">else</span>
+                <span class="k">break</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">matchChannel</span> <span class="o">==</span> <span class="n">numChannels</span><span class="p">)</span>
+            <span class="k">break</span><span class="p">;</span> <span class="c1">//Found an entry that matched all channels</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="n">c</span><span class="p">.</span><span class="n">numEntries</span><span class="p">)</span>
+        <span class="c1">// p像素各通道值满足码本中其中一个码元,则返回白色</span>
+        <span class="k">return</span><span class="p">(</span><span class="mi">255</span><span class="p">);</span>
+
+    <span class="k">return</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="p">}</span>
 </code></pre></div>
 <p><strong>在检测的过程中我们也可以持续的更新codebook，即延时nGapFrame帧然后用其进行训练，并且在训练部分后进行codebook冗余的删除，这样对于运动的检测会更加准确。</strong></p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">//动态更新背景,延时nGapFrame帧
-if (StartUpdate)
-{
-    IplImage *temp = cvCreateImage(cvSize(frame.cols, frame.rows), IPL_DEPTH_8U, 3);;
-    *temp = gapFrameSet.front();
-    cvCvtColor(temp, temp, CV_BGR2YCrCb);
-    pColor = (uchar *)(temp-&gt;imageData);
-    for (int c = 0; c &lt; imageLen; c++)
-    {
-        cvupdateCodeBook(pColor, cB[c], cbBounds, nChannels);//对每一个码本进行训练
-        pColor += 3;
-    }
-    gapFrameSet.erase(gapFrameSet.begin());
-}
+<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="c1">//动态更新背景,延时nGapFrame帧</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">StartUpdate</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">IplImage</span> <span class="o">*</span><span class="n">temp</span> <span class="o">=</span> <span class="n">cvCreateImage</span><span class="p">(</span><span class="n">cvSize</span><span class="p">(</span><span class="n">frame</span><span class="p">.</span><span class="n">cols</span><span class="p">,</span> <span class="n">frame</span><span class="p">.</span><span class="n">rows</span><span class="p">),</span> <span class="n">IPL_DEPTH_8U</span><span class="p">,</span> <span class="mi">3</span><span class="p">);;</span>
+    <span class="o">*</span><span class="n">temp</span> <span class="o">=</span> <span class="n">gapFrameSet</span><span class="p">.</span><span class="n">front</span><span class="p">();</span>
+    <span class="n">cvCvtColor</span><span class="p">(</span><span class="n">temp</span><span class="p">,</span> <span class="n">temp</span><span class="p">,</span> <span class="n">CV_BGR2YCrCb</span><span class="p">);</span>
+    <span class="n">pColor</span> <span class="o">=</span> <span class="p">(</span><span class="n">uchar</span> <span class="o">*</span><span class="p">)(</span><span class="n">temp</span><span class="o">-&gt;</span><span class="n">imageData</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">c</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">c</span> <span class="o">&lt;</span> <span class="n">imageLen</span><span class="p">;</span> <span class="n">c</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">cvupdateCodeBook</span><span class="p">(</span><span class="n">pColor</span><span class="p">,</span> <span class="n">cB</span><span class="p">[</span><span class="n">c</span><span class="p">],</span> <span class="n">cbBounds</span><span class="p">,</span> <span class="n">nChannels</span><span class="p">);</span><span class="c1">//对每一个码本进行训练</span>
+        <span class="n">pColor</span> <span class="o">+=</span> <span class="mi">3</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">gapFrameSet</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span><span class="n">gapFrameSet</span><span class="p">.</span><span class="n">begin</span><span class="p">());</span>
+<span class="p">}</span>
 
-//每经过100帧动态进行码本的删除冗余
-if (iterInTest % nGapFrame == 0)
-{
-    for (int c = 0; c &lt; imageLen; c++)
-        cvclearStaleEntries(cB[c]);
-}
-gapFrameSet.push_back(frame.clone());
+<span class="c1">//每经过100帧动态进行码本的删除冗余</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">iterInTest</span> <span class="o">%</span> <span class="n">nGapFrame</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">c</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">c</span> <span class="o">&lt;</span> <span class="n">imageLen</span><span class="p">;</span> <span class="n">c</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">cvclearStaleEntries</span><span class="p">(</span><span class="n">cB</span><span class="p">[</span><span class="n">c</span><span class="p">]);</span>
+<span class="p">}</span>
+<span class="n">gapFrameSet</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">frame</span><span class="p">.</span><span class="n">clone</span><span class="p">());</span>
 
-//间隔nGapFrame帧后开始进行背景的动态更新
-if (iterInTest % nGapFrame == 0)
-{
-    if (StartUpdate == false)
-        StartUpdate = true;
-    else
-        StartUpdate = false;
-}
+<span class="c1">//间隔nGapFrame帧后开始进行背景的动态更新</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">iterInTest</span> <span class="o">%</span> <span class="n">nGapFrame</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">StartUpdate</span> <span class="o">==</span> <span class="nb">false</span><span class="p">)</span>
+        <span class="n">StartUpdate</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+    <span class="k">else</span>
+        <span class="n">StartUpdate</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+<span class="p">}</span>
 </code></pre></div>
 <p><strong><em>提取运动物体</em></strong>
 通过寻找连通域并且进行形态学的处理来提取运动物体：</p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">Mat Codebook::cvconnectedComponents(IplImage *mask, int poly1_hull0, float perimScale,Mat frame)
-{
-    static CvMemStorage*    mem_storage = NULL;
-    static CvSeq*           contours = NULL;
+<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="n">Mat</span> <span class="n">Codebook</span><span class="o">::</span><span class="n">cvconnectedComponents</span><span class="p">(</span><span class="n">IplImage</span> <span class="o">*</span><span class="n">mask</span><span class="p">,</span> <span class="kt">int</span> <span class="n">poly1_hull0</span><span class="p">,</span> <span class="kt">float</span> <span class="n">perimScale</span><span class="p">,</span><span class="n">Mat</span> <span class="n">frame</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">static</span> <span class="n">CvMemStorage</span><span class="o">*</span>    <span class="n">mem_storage</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+    <span class="k">static</span> <span class="n">CvSeq</span><span class="o">*</span>           <span class="n">contours</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
 
-    cvMorphologyEx(mask, mask, NULL, NULL, CV_MOP_OPEN, closeIter);
-    // 开运算先腐蚀在膨胀,腐蚀可以清除噪点,膨胀可以修复裂缝
-    cvMorphologyEx(mask, mask, NULL, NULL, CV_MOP_CLOSE, closeIter);
-    // 闭运算先膨胀后腐蚀,之所以在开运算之后,因为噪点膨胀后再腐蚀,是不可能去除的
+    <span class="n">cvMorphologyEx</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="n">CV_MOP_OPEN</span><span class="p">,</span> <span class="n">closeIter</span><span class="p">);</span>
+    <span class="c1">// 开运算先腐蚀在膨胀,腐蚀可以清除噪点,膨胀可以修复裂缝</span>
+    <span class="n">cvMorphologyEx</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="n">CV_MOP_CLOSE</span><span class="p">,</span> <span class="n">closeIter</span><span class="p">);</span>
+    <span class="c1">// 闭运算先膨胀后腐蚀,之所以在开运算之后,因为噪点膨胀后再腐蚀,是不可能去除的</span>
 
-    if (mem_storage == NULL)
-        mem_storage = cvCreateMemStorage(0);
-    else cvClearMemStorage(mem_storage);
+    <span class="k">if</span> <span class="p">(</span><span class="n">mem_storage</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
+        <span class="n">mem_storage</span> <span class="o">=</span> <span class="n">cvCreateMemStorage</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+    <span class="k">else</span> <span class="nf">cvClearMemStorage</span><span class="p">(</span><span class="n">mem_storage</span><span class="p">);</span>
 
-    CvContourScanner scanner = cvStartFindContours(mask, mem_storage,
-        sizeof(CvContour), CV_RETR_EXTERNAL);
+    <span class="n">CvContourScanner</span> <span class="n">scanner</span> <span class="o">=</span> <span class="n">cvStartFindContours</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">mem_storage</span><span class="p">,</span>
+        <span class="k">sizeof</span><span class="p">(</span><span class="n">CvContour</span><span class="p">),</span> <span class="n">CV_RETR_EXTERNAL</span><span class="p">);</span>
 
-    CvSeq* c;
-    int numCont = 0;
-
-
-
-    while ((c = cvFindNextContour(scanner)) != NULL)
-    {
-        double len = cvContourPerimeter(c);
-        // 计算轮廓周长
-        double q = (mask-&gt;height + mask-&gt;width) / perimScale;
-
-        if (len &lt; q)
-            cvSubstituteContour(scanner, NULL);//由于周长过小，删除当前的这一连通域
-        else
-        {
-            CvSeq* c_new;
-            if (poly1_hull0)
-                c_new = cvApproxPoly(c, sizeof(CvContour), mem_storage,
-                CV_POLY_APPROX_DP, approxLevel);//使用多边形逼近轮廓
-            else
-                c_new = cvConvexHull2(c, mem_storage, CV_CLOCKWISE, 1);
-
-            cvSubstituteContour(scanner, c_new);
-            numCont++;
-        }
-    }
+    <span class="n">CvSeq</span><span class="o">*</span> <span class="n">c</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">numCont</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
 
-    contours = cvEndFindContours(&amp;scanner);
 
-    cvZero(mask);
+    <span class="k">while</span> <span class="p">((</span><span class="n">c</span> <span class="o">=</span> <span class="n">cvFindNextContour</span><span class="p">(</span><span class="n">scanner</span><span class="p">))</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="kt">double</span> <span class="n">len</span> <span class="o">=</span> <span class="n">cvContourPerimeter</span><span class="p">(</span><span class="n">c</span><span class="p">);</span>
+        <span class="c1">// 计算轮廓周长</span>
+        <span class="kt">double</span> <span class="n">q</span> <span class="o">=</span> <span class="p">(</span><span class="n">mask</span><span class="o">-&gt;</span><span class="n">height</span> <span class="o">+</span> <span class="n">mask</span><span class="o">-&gt;</span><span class="n">width</span><span class="p">)</span> <span class="o">/</span> <span class="n">perimScale</span><span class="p">;</span>
 
-    for (c = contours; c != NULL; c = c-&gt;h_next)
-        cvDrawContours(mask, c, CV_CVX_WHITE, CV_CVX_BLACK, -1, CV_FILLED, 8);
-}
+        <span class="k">if</span> <span class="p">(</span><span class="n">len</span> <span class="o">&lt;</span> <span class="n">q</span><span class="p">)</span>
+            <span class="n">cvSubstituteContour</span><span class="p">(</span><span class="n">scanner</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span><span class="c1">//由于周长过小，删除当前的这一连通域</span>
+        <span class="k">else</span>
+        <span class="p">{</span>
+            <span class="n">CvSeq</span><span class="o">*</span> <span class="n">c_new</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">poly1_hull0</span><span class="p">)</span>
+                <span class="n">c_new</span> <span class="o">=</span> <span class="n">cvApproxPoly</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">CvContour</span><span class="p">),</span> <span class="n">mem_storage</span><span class="p">,</span>
+                <span class="n">CV_POLY_APPROX_DP</span><span class="p">,</span> <span class="n">approxLevel</span><span class="p">);</span><span class="c1">//使用多边形逼近轮廓</span>
+            <span class="k">else</span>
+                <span class="n">c_new</span> <span class="o">=</span> <span class="n">cvConvexHull2</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">mem_storage</span><span class="p">,</span> <span class="n">CV_CLOCKWISE</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+
+            <span class="n">cvSubstituteContour</span><span class="p">(</span><span class="n">scanner</span><span class="p">,</span> <span class="n">c_new</span><span class="p">);</span>
+            <span class="n">numCont</span><span class="o">++</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+
+    <span class="n">contours</span> <span class="o">=</span> <span class="n">cvEndFindContours</span><span class="p">(</span><span class="o">&amp;</span><span class="n">scanner</span><span class="p">);</span>
+
+    <span class="n">cvZero</span><span class="p">(</span><span class="n">mask</span><span class="p">);</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="n">c</span> <span class="o">=</span> <span class="n">contours</span><span class="p">;</span> <span class="n">c</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">;</span> <span class="n">c</span> <span class="o">=</span> <span class="n">c</span><span class="o">-&gt;</span><span class="n">h_next</span><span class="p">)</span>
+        <span class="n">cvDrawContours</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">CV_CVX_WHITE</span><span class="p">,</span> <span class="n">CV_CVX_BLACK</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">CV_FILLED</span><span class="p">,</span> <span class="mi">8</span><span class="p">);</span>
+<span class="p">}</span>
 </code></pre></div>
     <nav class="article-previous fn-clear">
         

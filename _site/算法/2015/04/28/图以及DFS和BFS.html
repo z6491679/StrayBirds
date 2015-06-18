@@ -134,102 +134,102 @@
         <span class="info-link"><a href="/navigations/categories.html#算法-ref" >算法</a></span>
     </div>
     <p>图：</p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">struct Edge{
-    Point start;
-    Point end;
-};
+<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="k">struct</span> <span class="n">Edge</span><span class="p">{</span>
+    <span class="n">Point</span> <span class="n">start</span><span class="p">;</span>
+    <span class="n">Point</span> <span class="n">end</span><span class="p">;</span>
+<span class="p">};</span>
 
-class graph
-{
-private:
-    int edge[1000][1000];
+<span class="k">class</span> <span class="nc">graph</span>
+<span class="p">{</span>
+<span class="k">private</span><span class="o">:</span>
+    <span class="kt">int</span> <span class="n">edge</span><span class="p">[</span><span class="mi">1000</span><span class="p">][</span><span class="mi">1000</span><span class="p">];</span>
 
-    Edge edge_set[1000];
+    <span class="n">Edge</span> <span class="n">edge_set</span><span class="p">[</span><span class="mi">1000</span><span class="p">];</span>
 
-    int Pnum = 0;
+    <span class="kt">int</span> <span class="n">Pnum</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
-    int Enum = 0;
+    <span class="kt">int</span> <span class="n">Enum</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
-    Point pset[1000];
-
-
-
-public:
-
-    graph()
-    {
-        memset(edge, 0, sizeof(edge));
-    }
-    //增加点
-    void addpoint(Point a);
-
-    //增加边
-    void addedge(int i, int j,int value);
-
-    //清空点
-    void clear_pset();
-
-    void clear_edge();
+    <span class="n">Point</span> <span class="n">pset</span><span class="p">[</span><span class="mi">1000</span><span class="p">];</span>
 
 
 
-    //通过向量叉乘符号来进行定义 ,必须严格大于0，在一条线上的也不算left 
-    bool toleft(Point a, Point b, Point k);
+<span class="k">public</span><span class="o">:</span>
 
-    int cross_product(Point a, Point b, Point k);
+    <span class="n">graph</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">memset</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">edge</span><span class="p">));</span>
+    <span class="p">}</span>
+    <span class="c1">//增加点</span>
+    <span class="kt">void</span> <span class="n">addpoint</span><span class="p">(</span><span class="n">Point</span> <span class="n">a</span><span class="p">);</span>
 
-    bool in_triangle(Point a, Point b, Point c, Point k);
+    <span class="c1">//增加边</span>
+    <span class="kt">void</span> <span class="nf">addedge</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="p">,</span> <span class="kt">int</span> <span class="n">j</span><span class="p">,</span><span class="kt">int</span> <span class="n">value</span><span class="p">);</span>
 
-    int graham_scan(Point *res);
+    <span class="c1">//清空点</span>
+    <span class="kt">void</span> <span class="nf">clear_pset</span><span class="p">();</span>
 
-    //返回extreme edge的个数
-    int EE(Point *res);
-
-    //Jarvis Marching
-    int JM(Point *res);
-
-    void dijkstra(int start_p,int res[][2]);
-
-    void floyd(int dist[][1000], int mid[][1000]);
-
-    void bfs(int start,int *res);
-
-    void dfs(int start);
+    <span class="kt">void</span> <span class="nf">clear_edge</span><span class="p">();</span>
 
 
-};
+
+    <span class="c1">//通过向量叉乘符号来进行定义 ,必须严格大于0，在一条线上的也不算left </span>
+    <span class="kt">bool</span> <span class="nf">toleft</span><span class="p">(</span><span class="n">Point</span> <span class="n">a</span><span class="p">,</span> <span class="n">Point</span> <span class="n">b</span><span class="p">,</span> <span class="n">Point</span> <span class="n">k</span><span class="p">);</span>
+
+    <span class="kt">int</span> <span class="nf">cross_product</span><span class="p">(</span><span class="n">Point</span> <span class="n">a</span><span class="p">,</span> <span class="n">Point</span> <span class="n">b</span><span class="p">,</span> <span class="n">Point</span> <span class="n">k</span><span class="p">);</span>
+
+    <span class="kt">bool</span> <span class="nf">in_triangle</span><span class="p">(</span><span class="n">Point</span> <span class="n">a</span><span class="p">,</span> <span class="n">Point</span> <span class="n">b</span><span class="p">,</span> <span class="n">Point</span> <span class="n">c</span><span class="p">,</span> <span class="n">Point</span> <span class="n">k</span><span class="p">);</span>
+
+    <span class="kt">int</span> <span class="nf">graham_scan</span><span class="p">(</span><span class="n">Point</span> <span class="o">*</span><span class="n">res</span><span class="p">);</span>
+
+    <span class="c1">//返回extreme edge的个数</span>
+    <span class="kt">int</span> <span class="nf">EE</span><span class="p">(</span><span class="n">Point</span> <span class="o">*</span><span class="n">res</span><span class="p">);</span>
+
+    <span class="c1">//Jarvis Marching</span>
+    <span class="kt">int</span> <span class="nf">JM</span><span class="p">(</span><span class="n">Point</span> <span class="o">*</span><span class="n">res</span><span class="p">);</span>
+
+    <span class="kt">void</span> <span class="nf">dijkstra</span><span class="p">(</span><span class="kt">int</span> <span class="n">start_p</span><span class="p">,</span><span class="kt">int</span> <span class="n">res</span><span class="p">[][</span><span class="mi">2</span><span class="p">]);</span>
+
+    <span class="kt">void</span> <span class="nf">floyd</span><span class="p">(</span><span class="kt">int</span> <span class="n">dist</span><span class="p">[][</span><span class="mi">1000</span><span class="p">],</span> <span class="kt">int</span> <span class="n">mid</span><span class="p">[][</span><span class="mi">1000</span><span class="p">]);</span>
+
+    <span class="kt">void</span> <span class="nf">bfs</span><span class="p">(</span><span class="kt">int</span> <span class="n">start</span><span class="p">,</span><span class="kt">int</span> <span class="o">*</span><span class="n">res</span><span class="p">);</span>
+
+    <span class="kt">void</span> <span class="nf">dfs</span><span class="p">(</span><span class="kt">int</span> <span class="n">start</span><span class="p">);</span>
+
+
+<span class="p">};</span>
 </code></pre></div>
 <p>BFS：用一个队列来实现距离越短越先访问</p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">void graph::bfs(int start,int *dis)
-{
-    queue&lt;int&gt; q;
-    int Pnum = this-&gt;Pnum;
-    int visit[1000];//0代表从未访问（white），1代表它的前一个节点已经访问到（gray），2代表已经被访问到（black）
-    memset(visit, 0, sizeof(visit));
-    q.push(start);
-    dis[start] = 0;
-    while (!q.empty())
-    {
-        int p_now = q.front();
-        q.pop();
-        for (int i = 0; i &lt; Pnum; i++)//
-        {
-            if (p_now == i)
-                continue;
-            if (this-&gt;edge[p_now][i] &amp;&amp; visit[i] == 0)
-            {
-                q.push(i);
-                visit[i] = 1;
-                if (dis[i] == 0)
-                    dis[i] = dis[p_now] + 1;//dis为其前一个节点的距离+1
-            }
-        }
-        //visit[p_now] = 2;
-    }
-}
+<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="kt">void</span> <span class="n">graph</span><span class="o">::</span><span class="n">bfs</span><span class="p">(</span><span class="kt">int</span> <span class="n">start</span><span class="p">,</span><span class="kt">int</span> <span class="o">*</span><span class="n">dis</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">queue</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">q</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">Pnum</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">Pnum</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">visit</span><span class="p">[</span><span class="mi">1000</span><span class="p">];</span><span class="c1">//0代表从未访问（white），1代表它的前一个节点已经访问到（gray），2代表已经被访问到（black）</span>
+    <span class="n">memset</span><span class="p">(</span><span class="n">visit</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">visit</span><span class="p">));</span>
+    <span class="n">q</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">start</span><span class="p">);</span>
+    <span class="n">dis</span><span class="p">[</span><span class="n">start</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="n">q</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span>
+    <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">p_now</span> <span class="o">=</span> <span class="n">q</span><span class="p">.</span><span class="n">front</span><span class="p">();</span>
+        <span class="n">q</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">Pnum</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="c1">//</span>
+        <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">p_now</span> <span class="o">==</span> <span class="n">i</span><span class="p">)</span>
+                <span class="k">continue</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">edge</span><span class="p">[</span><span class="n">p_now</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="n">visit</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">q</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+                <span class="n">visit</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">dis</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+                    <span class="n">dis</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">dis</span><span class="p">[</span><span class="n">p_now</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span><span class="c1">//dis为其前一个节点的距离+1</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="c1">//visit[p_now] = 2;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
 </code></pre></div>
 <p>DFS：</p>
-<div class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span class="c1">//用栈可以实现回溯调用，</span>
+<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="c1">//用栈可以实现回溯调用，</span>
 <span class="c1">//1 如果有可能，访问一个领接的未访问的节点，标记它，并把它放入栈中。</span>
 <span class="c1">//2 当不能执行规则 1 时，如果栈不为空，则从栈中弹出一个元素。</span>
 <span class="c1">//3 如果不能执行规则 1 和规则 2 时，则完成了遍历。</span>
