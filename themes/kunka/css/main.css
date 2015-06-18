@@ -156,6 +156,8 @@ a         { color: #91736b; text-decoration: none; }
     height: auto;
     box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.1);
     background: #e3ded8 url(../images/cnt-top.jpg) repeat-x 0 0;
+	position:relative;
+	left:5.8%;
 }
 
 .main .article {
@@ -643,8 +645,8 @@ a         { color: #91736b; text-decoration: none; }
     min-height: 500px;
     height: auto;
     box-shadow:  3px 3px 6px rgba(0, 0, 0, 0.1), 1px 0 4px rgba(0, 0, 0, 0.3) inset;
-    position: absolute;
-    right: 96px;
+    position: fixed;
+    left: 59.4%;
 }
 .aside-contact {
     width: 220px;
