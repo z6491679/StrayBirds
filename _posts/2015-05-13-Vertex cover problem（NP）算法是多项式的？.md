@@ -25,7 +25,7 @@ Part II. For each pair of minimal vertex covers Ci, Cj found in Part I
 		4.The result is a minimal vertex cover Ci, j.
 
 
-```
+```c++
 #include <iostream>
 
 #include <vector>

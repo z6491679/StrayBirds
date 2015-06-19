@@ -151,242 +151,242 @@
         2.Perform procedure 3.1 on Ci, j.
         3.For r = 1, 2, ..., n−k perform procedure 3.2 repeated r times.
         4.The result is a minimal vertex cover Ci, j.</p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">#include &lt;iostream&gt;
+<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="cp">#include &lt;iostream&gt;</span>
 
-#include &lt;vector&gt;
+<span class="cp">#include &lt;vector&gt;</span>
 
-#include&lt;algorithm&gt;
+<span class="cp">#include&lt;algorithm&gt;</span>
 
-using namespace std;
-
-
-class graph
-{
-    vector&lt;int&gt; p_set[101];
-    vector&lt;vector&lt;int&gt; &gt; covers;
-    vector&lt;int&gt; allcover;
-    int Max_V;
-    int Vnum;
-    int Enum;
-
-public:
-
-    vector&lt;int&gt; res;
-    int min;
-    void initial();
-    bool removable(vector&lt;int&gt; neighbor, vector&lt;int&gt; cover);
-    int max_removable(vector&lt;int&gt; cover);
-    vector&lt;int&gt; procedure_1(vector&lt;int&gt; cover);
-    vector&lt;int&gt; procedure_2(vector&lt;int&gt; cover, int k);
-    int cover_size(vector&lt;int&gt; cover);
-    bool findvertexcorver();
-    bool pairwiseUnions();
-};
-
-void graph::initial()
-{
-    cin &gt;&gt; Vnum &gt;&gt; Enum &gt;&gt; Max_V;
-    for (int j = 0; j &lt; Enum; j++)
-    {
-        int a, b;
-        cin &gt;&gt; a &gt;&gt; b;
-        p_set[a - 1].push_back(b - 1);
-        p_set[b - 1].push_back(a - 1);
-    }
-    for (int i = 0; i &lt; Vnum; i++)
-        allcover.push_back(1);
-    min = Vnum + 1;
-    res.clear();
-}
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
 
 
-bool graph::removable(vector&lt;int&gt; neighbor, vector&lt;int&gt; cover)
-{
-    bool check = true;
-    for (int i = 0; i &lt; neighbor.size(); i++)
-        if (cover[neighbor[i]] == 0)
-        {
-            check = false;
-            break;
-        }
-    return check;
-}
+<span class="k">class</span> <span class="nc">graph</span>
+<span class="p">{</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">p_set</span><span class="p">[</span><span class="mi">101</span><span class="p">];</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="o">&gt;</span> <span class="n">covers</span><span class="p">;</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">allcover</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">Max_V</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">Vnum</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">Enum</span><span class="p">;</span>
 
-int graph::max_removable(vector&lt;int&gt; cover)
-{
-    int r = -1, max = -1;
-    for (int i = 0; i &lt; cover.size(); i++)
-    {
-        if (cover[i] == 1 &amp;&amp; removable(p_set[i], cover) == true)
-        {
-            vector&lt;int&gt; temp_cover = cover;
-            temp_cover[i] = 0;
-            int sum = 0;
-            for (int j = 0; j &lt; temp_cover.size(); j++)
-                if (temp_cover[j] == 1 &amp;&amp; removable(p_set[j], temp_cover) == true)
-                    sum++;
-            if (sum&gt;max)
-            {
-                max = sum;
-                r = i;
-            }
-        }
-    }
-    return r;
-}
+<span class="k">public</span><span class="o">:</span>
 
-vector&lt;int&gt; graph::procedure_1(vector&lt;int&gt; cover)
-{
-    vector&lt;int&gt; temp_cover = cover;
-    int r = 0;
-    while (r != -1)
-    {
-        r = max_removable(temp_cover);
-        if (r != -1) temp_cover[r] = 0;
-    }
-    return temp_cover;
-}
+    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">res</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">min</span><span class="p">;</span>
+    <span class="kt">void</span> <span class="nf">initial</span><span class="p">();</span>
+    <span class="kt">bool</span> <span class="nf">removable</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">neighbor</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">cover</span><span class="p">);</span>
+    <span class="kt">int</span> <span class="nf">max_removable</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">cover</span><span class="p">);</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">procedure_1</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">cover</span><span class="p">);</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">procedure_2</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">cover</span><span class="p">,</span> <span class="kt">int</span> <span class="n">k</span><span class="p">);</span>
+    <span class="kt">int</span> <span class="nf">cover_size</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">cover</span><span class="p">);</span>
+    <span class="kt">bool</span> <span class="nf">findvertexcorver</span><span class="p">();</span>
+    <span class="kt">bool</span> <span class="nf">pairwiseUnions</span><span class="p">();</span>
+<span class="p">};</span>
 
-vector&lt;int&gt; graph::procedure_2(vector&lt;int&gt; cover, int k)
-{
-    int count = 0;
-    vector&lt;int&gt; temp_cover = cover;
-    int i = 0;
-    for (int i = 0; i &lt; temp_cover.size(); i++)
-    {
-        if (temp_cover[i] == 1)
-        {
-            int sum = 0, index;
-            for (int j = 0; j&lt;p_set[i].size(); j++)
-                if (temp_cover[p_set[i][j]] == 0) { index = j; sum++; }
-            if (sum == 1 &amp;&amp; cover[p_set[i][index]] == 0)
-            {
-                temp_cover[p_set[i][index]] = 1;
-                temp_cover[i] = 0;
-                temp_cover = procedure_1(temp_cover);
-                count++;
-            }
-            if (count&gt;k) 
-                break;
-        }
-    }
-    return temp_cover;
-}
+<span class="kt">void</span> <span class="n">graph</span><span class="o">::</span><span class="n">initial</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">Vnum</span> <span class="o">&gt;&gt;</span> <span class="n">Enum</span> <span class="o">&gt;&gt;</span> <span class="n">Max_V</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">Enum</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">;</span>
+        <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">a</span> <span class="o">&gt;&gt;</span> <span class="n">b</span><span class="p">;</span>
+        <span class="n">p_set</span><span class="p">[</span><span class="n">a</span> <span class="o">-</span> <span class="mi">1</span><span class="p">].</span><span class="n">push_back</span><span class="p">(</span><span class="n">b</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="n">p_set</span><span class="p">[</span><span class="n">b</span> <span class="o">-</span> <span class="mi">1</span><span class="p">].</span><span class="n">push_back</span><span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">Vnum</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">allcover</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">min</span> <span class="o">=</span> <span class="n">Vnum</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="n">res</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
+<span class="p">}</span>
 
 
-int graph::cover_size(vector&lt;int&gt; cover)
-{
-    int count = 0;
-    for (int i = 0; i &lt; cover.size(); i++)
-        if (cover[i] == 1) count++;
-    return count;
-}
+<span class="kt">bool</span> <span class="n">graph</span><span class="o">::</span><span class="n">removable</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">neighbor</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">cover</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">bool</span> <span class="n">check</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">neighbor</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">cover</span><span class="p">[</span><span class="n">neighbor</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">check</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="k">return</span> <span class="n">check</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="n">graph</span><span class="o">::</span><span class="n">max_removable</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">cover</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">r</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">max</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">cover</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">cover</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="n">removable</span><span class="p">(</span><span class="n">p_set</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">cover</span><span class="p">)</span> <span class="o">==</span> <span class="nb">true</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">temp_cover</span> <span class="o">=</span> <span class="n">cover</span><span class="p">;</span>
+            <span class="n">temp_cover</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="kt">int</span> <span class="n">sum</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">temp_cover</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">temp_cover</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="n">removable</span><span class="p">(</span><span class="n">p_set</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">temp_cover</span><span class="p">)</span> <span class="o">==</span> <span class="nb">true</span><span class="p">)</span>
+                    <span class="n">sum</span><span class="o">++</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">sum</span><span class="o">&gt;</span><span class="n">max</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">max</span> <span class="o">=</span> <span class="n">sum</span><span class="p">;</span>
+                <span class="n">r</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">r</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">graph</span><span class="o">::</span><span class="n">procedure_1</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">cover</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">temp_cover</span> <span class="o">=</span> <span class="n">cover</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">r</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">r</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">max_removable</span><span class="p">(</span><span class="n">temp_cover</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">r</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="n">temp_cover</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">temp_cover</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">graph</span><span class="o">::</span><span class="n">procedure_2</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">cover</span><span class="p">,</span> <span class="kt">int</span> <span class="n">k</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">temp_cover</span> <span class="o">=</span> <span class="n">cover</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">temp_cover</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">temp_cover</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="kt">int</span> <span class="n">sum</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">index</span><span class="p">;</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span><span class="o">&lt;</span><span class="n">p_set</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">size</span><span class="p">();</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">temp_cover</span><span class="p">[</span><span class="n">p_set</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span> <span class="n">index</span> <span class="o">=</span> <span class="n">j</span><span class="p">;</span> <span class="n">sum</span><span class="o">++</span><span class="p">;</span> <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">sum</span> <span class="o">==</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="n">cover</span><span class="p">[</span><span class="n">p_set</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">index</span><span class="p">]]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">temp_cover</span><span class="p">[</span><span class="n">p_set</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">index</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+                <span class="n">temp_cover</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+                <span class="n">temp_cover</span> <span class="o">=</span> <span class="n">procedure_1</span><span class="p">(</span><span class="n">temp_cover</span><span class="p">);</span>
+                <span class="n">count</span><span class="o">++</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">count</span><span class="o">&gt;</span><span class="n">k</span><span class="p">)</span> 
+                <span class="k">break</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">temp_cover</span><span class="p">;</span>
+<span class="p">}</span>
 
 
-bool graph::findvertexcorver()
-{
-    bool found = false;
-    int counter = 0;
-    int s;
-    for (int i = 0; i &lt; allcover.size(); i++)
-    {
-        if (found) break;
-        counter++;
-        vector&lt;int&gt; cover = allcover;
-        cover[i] = 0;
-        cover = procedure_1(cover);
-        s = cover_size(cover);
-        if (s &lt; min) min = s;
-        if (s &lt;= Max_V)
-        {
-            for (int j = 0; j &lt; cover.size(); j++) if (cover[j] == 1) res.push_back(j + 1);
-            covers.push_back(cover);
-            found = true;
-            break;
-        }
-        for (int j = 0; j &lt; Vnum - Max_V; j++)
-            cover = procedure_2(cover, j);
-        s = cover_size(cover);
-        if (s &lt; min) min = s;
-        for (int j = 0; j &lt; cover.size(); j++) if (cover[j] == 1) res.push_back(j + 1);
-        covers.push_back(cover);
-        if (s &lt;= Max_V)
-        { 
-            found = true; 
-            break; 
-        }
-        res.clear();
-    }
-    return found;
-}
+<span class="kt">int</span> <span class="n">graph</span><span class="o">::</span><span class="n">cover_size</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">cover</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">cover</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">cover</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="n">count</span><span class="o">++</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">count</span><span class="p">;</span>
+<span class="p">}</span>
 
 
-bool graph::pairwiseUnions()
-{
-    bool found = false;
-    int counter = 0;
-    int s;
-    for (int p = 0; p &lt; covers.size(); p++)
-    {
-        if (found) break;
-        for (int q = p + 1; q &lt; covers.size(); q++)
-        {
-            if (found) break;
-            counter++;
-            vector&lt;int&gt; cover = allcover;
-            for (int r = 0; r &lt; cover.size(); r++)
-                if (covers[p][r] == 0 &amp;&amp; covers[q][r] == 0) cover[r] = 0;
-            cover = procedure_1(cover);
-            s = cover_size(cover);
-            if (s&lt;min) min = s;
-            if (s &lt;= Max_V)
-            {
-                for (int j = 0; j &lt; cover.size(); j++) if (cover[j] == 1) res.push_back(j + 1);
-                found = true;
-                break;
-            }
-            for (int j = 0; j &lt; Max_V; j++)
-                cover = procedure_2(cover, j);
-            s = cover_size(cover);
-            if (s&lt;min) min = s;
-            for (int j = 0; j &lt; cover.size(); j++) if (cover[j] == 1) res.push_back(j + 1);
-            if (s &lt;= Max_V){ found = true; break; }
-        }
-        res.clear();
-    }
-    return found;
-}
+<span class="kt">bool</span> <span class="n">graph</span><span class="o">::</span><span class="n">findvertexcorver</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">bool</span> <span class="n">found</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">s</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">allcover</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">found</span><span class="p">)</span> <span class="k">break</span><span class="p">;</span>
+        <span class="n">counter</span><span class="o">++</span><span class="p">;</span>
+        <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">cover</span> <span class="o">=</span> <span class="n">allcover</span><span class="p">;</span>
+        <span class="n">cover</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="n">cover</span> <span class="o">=</span> <span class="n">procedure_1</span><span class="p">(</span><span class="n">cover</span><span class="p">);</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">cover_size</span><span class="p">(</span><span class="n">cover</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">s</span> <span class="o">&lt;</span> <span class="n">min</span><span class="p">)</span> <span class="n">min</span> <span class="o">=</span> <span class="n">s</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">s</span> <span class="o">&lt;=</span> <span class="n">Max_V</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">cover</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span> <span class="k">if</span> <span class="p">(</span><span class="n">cover</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="n">res</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+            <span class="n">covers</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">cover</span><span class="p">);</span>
+            <span class="n">found</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">Vnum</span> <span class="o">-</span> <span class="n">Max_V</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+            <span class="n">cover</span> <span class="o">=</span> <span class="n">procedure_2</span><span class="p">(</span><span class="n">cover</span><span class="p">,</span> <span class="n">j</span><span class="p">);</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">cover_size</span><span class="p">(</span><span class="n">cover</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">s</span> <span class="o">&lt;</span> <span class="n">min</span><span class="p">)</span> <span class="n">min</span> <span class="o">=</span> <span class="n">s</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">cover</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span> <span class="k">if</span> <span class="p">(</span><span class="n">cover</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="n">res</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="n">covers</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">cover</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">s</span> <span class="o">&lt;=</span> <span class="n">Max_V</span><span class="p">)</span>
+        <span class="p">{</span> 
+            <span class="n">found</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span> 
+            <span class="k">break</span><span class="p">;</span> 
+        <span class="p">}</span>
+        <span class="n">res</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">found</span><span class="p">;</span>
+<span class="p">}</span>
 
 
-int main()
-{
-    freopen(&quot;E:\\study\\算法复杂度\\vetex cover\\in.txt&quot;, &quot;rb&quot;, stdin);
-    int n;
-    cin &gt;&gt; n;
-    for (int m = 0; m &lt; n; m++)
-    {
-        graph g;
-        g.initial();
-        if (g.findvertexcorver())
-        {
-            cout &lt;&lt; g.min &lt;&lt; endl;
-            for (int i = 0; i &lt; g.res.size(); i++)
-                cout &lt;&lt; g.res[i] &lt;&lt; &quot; &quot;;
-            cout &lt;&lt; endl;
-            continue;
-        }
-        if (g.pairwiseUnions())
-        {
-            cout &lt;&lt; g.min &lt;&lt; endl;
-            for (int i = 0; i &lt; g.res.size(); i++)
-                cout &lt;&lt; g.res[i] &lt;&lt; &quot; &quot;;
-            cout &lt;&lt; endl;
-            continue;
-        }
-        cout &lt;&lt; -1 &lt;&lt; endl;
-    }
-    return 0;
-}
+<span class="kt">bool</span> <span class="n">graph</span><span class="o">::</span><span class="n">pairwiseUnions</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">bool</span> <span class="n">found</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">s</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">p</span> <span class="o">&lt;</span> <span class="n">covers</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="n">p</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">found</span><span class="p">)</span> <span class="k">break</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">q</span> <span class="o">=</span> <span class="n">p</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> <span class="n">q</span> <span class="o">&lt;</span> <span class="n">covers</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="n">q</span><span class="o">++</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">found</span><span class="p">)</span> <span class="k">break</span><span class="p">;</span>
+            <span class="n">counter</span><span class="o">++</span><span class="p">;</span>
+            <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">cover</span> <span class="o">=</span> <span class="n">allcover</span><span class="p">;</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">r</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">r</span> <span class="o">&lt;</span> <span class="n">cover</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="n">r</span><span class="o">++</span><span class="p">)</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">covers</span><span class="p">[</span><span class="n">p</span><span class="p">][</span><span class="n">r</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">covers</span><span class="p">[</span><span class="n">q</span><span class="p">][</span><span class="n">r</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="n">cover</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="n">cover</span> <span class="o">=</span> <span class="n">procedure_1</span><span class="p">(</span><span class="n">cover</span><span class="p">);</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">cover_size</span><span class="p">(</span><span class="n">cover</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">s</span><span class="o">&lt;</span><span class="n">min</span><span class="p">)</span> <span class="n">min</span> <span class="o">=</span> <span class="n">s</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">s</span> <span class="o">&lt;=</span> <span class="n">Max_V</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">cover</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span> <span class="k">if</span> <span class="p">(</span><span class="n">cover</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="n">res</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+                <span class="n">found</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">Max_V</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+                <span class="n">cover</span> <span class="o">=</span> <span class="n">procedure_2</span><span class="p">(</span><span class="n">cover</span><span class="p">,</span> <span class="n">j</span><span class="p">);</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">cover_size</span><span class="p">(</span><span class="n">cover</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">s</span><span class="o">&lt;</span><span class="n">min</span><span class="p">)</span> <span class="n">min</span> <span class="o">=</span> <span class="n">s</span><span class="p">;</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">cover</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span> <span class="k">if</span> <span class="p">(</span><span class="n">cover</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="n">res</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">s</span> <span class="o">&lt;=</span> <span class="n">Max_V</span><span class="p">){</span> <span class="n">found</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span> <span class="k">break</span><span class="p">;</span> <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="n">res</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">found</span><span class="p">;</span>
+<span class="p">}</span>
+
+
+<span class="kt">int</span> <span class="n">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">freopen</span><span class="p">(</span><span class="s">&quot;E:</span><span class="se">\\</span><span class="s">study</span><span class="se">\\</span><span class="s">算法复杂度</span><span class="se">\\</span><span class="s">vetex cover</span><span class="se">\\</span><span class="s">in.txt&quot;</span><span class="p">,</span> <span class="s">&quot;rb&quot;</span><span class="p">,</span> <span class="n">stdin</span><span class="p">);</span>
+    <span class="kt">int</span> <span class="n">n</span><span class="p">;</span>
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">n</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">m</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">m</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="n">m</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">graph</span> <span class="n">g</span><span class="p">;</span>
+        <span class="n">g</span><span class="p">.</span><span class="n">initial</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">g</span><span class="p">.</span><span class="n">findvertexcorver</span><span class="p">())</span>
+        <span class="p">{</span>
+            <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">g</span><span class="p">.</span><span class="n">min</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">g</span><span class="p">.</span><span class="n">res</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+                <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">g</span><span class="p">.</span><span class="n">res</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; &quot;</span><span class="p">;</span>
+            <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+            <span class="k">continue</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">g</span><span class="p">.</span><span class="n">pairwiseUnions</span><span class="p">())</span>
+        <span class="p">{</span>
+            <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">g</span><span class="p">.</span><span class="n">min</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">g</span><span class="p">.</span><span class="n">res</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+                <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">g</span><span class="p">.</span><span class="n">res</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; &quot;</span><span class="p">;</span>
+            <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+            <span class="k">continue</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="o">-</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
 </code></pre></div>
 <p>引用</p>
 
