@@ -12,7 +12,7 @@
         -->
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
         <meta charset="utf-8">
-        <title>文章目录 - Qilong Tech</title>
+        <title>matlab 2014b 调用 vs2013 + opencv混合编程配置、mat 与 mxarray的转换、matlab在vs2013中调试 - Qilong Tech</title>
         <!-- meta -->
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
         <meta name="generator" content="Jekyll" />
@@ -136,27 +136,15 @@
             <div class="container fn-clear">
                 <div class="main">
                     
-	
-    <div class="article">
-        <h3 class="title"><a href="/%E7%A7%91%E7%A0%94/2015/04/26/vs2013%E8%B0%83%E7%94%A8matlab%E5%87%BD%E6%95%B0.html" title="vs2013调用matlab函数">vs2013调用matlab函数</a></h3>
-        <article class="rexp">
-            <p><p><strong>法一（常用方法）：使用engine。</strong>
-添加matlab环境，这个网上都有，然后使用</p>
-</p>
-        </article>
-        <a href="/%E7%A7%91%E7%A0%94/2015/04/26/vs2013%E8%B0%83%E7%94%A8matlab%E5%87%BD%E6%95%B0.html" class="more"><i class="icon-link"></i></a>
-        <div class="info">
-            <span class="info-title"><i class="icon-calendar"></i> Published: </span>
-            <span class="info-date">26 Apr 2015</span>
-             <span class="info-title"><i class="icon-folder-open"></i> Category: </span>
-            <span class="info-link"><a href="/navigations/categories.html#科研-ref" >科研</a></span>
-        </div>
+    <div class="article article-post">
+    <h2 class="title">matlab 2014b 调用 vs2013 + opencv混合编程配置、mat 与 mxarray的转换、matlab在vs2013中调试</h2>
+    <div class="info">
+        <span class="info-title"><i class="icon-calendar"></i> Published: </span>
+        <span class="info-date">26 Apr 2015</span>
+        <span class="info-title"><i class="icon-folder-open"></i> Category: </span>
+        <span class="info-link"><a href="/navigations/categories.html#算法-ref" >算法</a></span>
     </div>
-
-    <div class="article">
-        <h3 class="title"><a href="/%E7%AE%97%E6%B3%95/2015/04/26/matlab%202014b%20%E8%B0%83%E7%94%A8%20vs2013%20+%20opencv%E6%B7%B7%E5%90%88%E7%BC%96%E7%A8%8B%E9%85%8D%E7%BD%AE%E3%80%81mat%20%E4%B8%8E%20mxarray%E7%9A%84%E8%BD%AC%E6%8D%A2%E3%80%81matlab%E5%9C%A8vs2013%E4%B8%AD%E8%B0%83%E8%AF%95.html" title="matlab 2014b 调用 vs2013 + opencv混合编程配置、mat 与 mxarray的转换、matlab在vs2013中调试">matlab 2014b 调用 vs2013 + opencv混合编程配置、mat 与 mxarray的转换、matlab在vs2013中调试</a></h3>
-        <article class="rexp">
-            <p><p>一、编译
+    <p>一、编译
 首先设置mex -setup，然后进行文件的编译，有现成的.m类似脚本的代码如下：
 mex -g 命令开启在vs下可以调试，否则不能调试。
 ```
@@ -166,131 +154,187 @@ mex -g 命令开启在vs下可以调试，否则不能调试。
 % Date    : 2014-9-10
 % HomePage: http://www.cnblogs.com/lukylu/
 % Email   : wanglu@innomotion.biz</p>
-</p>
-        </article>
-        <a href="/%E7%AE%97%E6%B3%95/2015/04/26/matlab%202014b%20%E8%B0%83%E7%94%A8%20vs2013%20+%20opencv%E6%B7%B7%E5%90%88%E7%BC%96%E7%A8%8B%E9%85%8D%E7%BD%AE%E3%80%81mat%20%E4%B8%8E%20mxarray%E7%9A%84%E8%BD%AC%E6%8D%A2%E3%80%81matlab%E5%9C%A8vs2013%E4%B8%AD%E8%B0%83%E8%AF%95.html" class="more"><i class="icon-link"></i></a>
-        <div class="info">
-            <span class="info-title"><i class="icon-calendar"></i> Published: </span>
-            <span class="info-date">26 Apr 2015</span>
-             <span class="info-title"><i class="icon-folder-open"></i> Category: </span>
-            <span class="info-link"><a href="/navigations/categories.html#算法-ref" >算法</a></span>
-        </div>
-    </div>
 
-    <div class="article">
-        <h3 class="title"><a href="/%E7%AE%97%E6%B3%95/2015/04/07/%E5%AF%BB%E6%89%BE%E6%9C%80%E8%BF%91%E7%82%B9%E5%AF%B9.html" title="寻找最近点对">寻找最近点对</a></h3>
-        <article class="rexp">
-            <p><p>问题：在空间中有n个点，寻找空间中最近的2个点。
-法一：遍历，O（n^2）
-法二：分治算法：
-将点分为左右两半，分别找到最近的2个点，然后考虑交叉位置的点对中的最小距离，在这3者中取最小的那个。O（nlogn）。</p>
-</p>
-        </article>
-        <a href="/%E7%AE%97%E6%B3%95/2015/04/07/%E5%AF%BB%E6%89%BE%E6%9C%80%E8%BF%91%E7%82%B9%E5%AF%B9.html" class="more"><i class="icon-link"></i></a>
-        <div class="info">
-            <span class="info-title"><i class="icon-calendar"></i> Published: </span>
-            <span class="info-date">07 Apr 2015</span>
-             <span class="info-title"><i class="icon-folder-open"></i> Category: </span>
-            <span class="info-link"><a href="/navigations/categories.html#算法-ref" >算法</a></span>
-        </div>
-    </div>
+<p>% Matlab and C++ mixed programming(dependent on opencv library)
+% First step(before exeuting this program): use &quot;mex -setup&quot; to choose your c/c++ compiler
+clear all;</p>
 
-    <div class="article">
-        <h3 class="title"><a href="/%E7%AE%97%E6%B3%95/2015/04/05/%E5%87%B8%E5%8C%85%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90.html" title="凸包算法分析">凸包算法分析</a></h3>
-        <article class="rexp">
-            <p><p><strong>toleft:</strong>
-对于toleft的计算，是通过叉积的定义来进行的，叉积代表面积，且方向为顺时针，那么如果大于0，则认为k在ab向量的左边.
-对于2个向量a(x1,y1),b(x2,y2),将其进行行列式的计算，第三维补0，计算过程如下：
-<img src="http://img.blog.csdn.net/20150405203744571" alt="这里写图片描述">
-而2个二维向量可以由3个点a(x1,y1),b(x2,y2),k(x3,y3)相减得到，然后我们可以得到计算公式：
-<code>c++
-//通过向量叉乘符号来进行定义 ,必须严格大于0，在一条线上的也不算left 
-bool toleft(Point a, Point b, Point k)
+<p>% Get the architecture of this computer
+is_64bit = strcmp(computer,&#39;MACI64&#39;) || strcmp(computer,&#39;GLNXA64&#39;) || strcmp(computer,&#39;PCWIN64&#39;);</p>
+
+<p>%----------------------------------------------------------------------------------------------<br>
+%% The configuration of compiler
+% You need to modify this configuration according to your own path of OpenCV<br>
+% Notice: if your system is 64bit, your OpenCV must be 64bit! 
+out<em>dir=&#39;./&#39;;<br>
+CPPFLAGS = &#39; -O -DNDEBUG -I.\ -IE:\opencv\build\include -IE:\opencv\build\include\opencv2 -IE:\opencv\build\include\opencv&#39;; % your OpenCV &quot;include&quot; path<br>
+LDFLAGS = &#39; -LE:\opencv\build\x64\vc12\lib&#39;;                       % your OpenCV &quot;lib&quot; path<br>
+LIBS = &#39; -lopencv</em>calib3d249d -lopencv<em>contrib249d -lopencv</em>core249d -lopencv<em>features2d249d -lopencv</em>flann249d -lopencv<em>gpu249d -lopencv</em>highgui249d -lopencv<em>imgproc249d -lopencv</em>legacy249d -lopencv<em>ml249d -lopencv</em>nonfree249d -lopencv<em>objdetect249d -lopencv</em>photo249d -lopencv<em>stitching249d -lopencv</em>ts249d -lopencv<em>video249d -lopencv</em>videostab249d&#39;;
+%LIBS = &#39; -lopencv<em>calib3d249 -lopencv</em>contrib249 -lopencvclear<em>core249 -lopencv</em>features2d249 -lopencv<em>flann249 -lopencv</em>gpu249 -lopencv<em>highgui249 -lopencv</em>imgproc249 -lopencv<em>legacy249 -lopencv</em>ml249 -lopencv<em>nonfree249 -lopencv</em>objdetect249 -lopencv<em>photo249 -lopencv</em>stitching249 -lopencv<em>ts249 -lopencv</em>video249 -lopencv<em>videostab249&#39;;
+if is</em>64bit<br>
+    CPPFLAGS = [CPPFLAGS &#39; -largeArrayDims&#39;];<br>
+end  </p>
+
+<p>% add your files here!!
+compile<em>files = {
+    %the list of your code files which need to be compiled
+    &#39;-g class</em>interface_mex.cpp codebook.cpp BGSub.cpp&#39;
+    };
+%---------------------------------------------------------------------------------------------- </p>
+
+<p>%---------------------------------------------------------------------------------------------- 
+%% compiling
+for k = 1 : length(compile<em>files)<br>
+    str = compile</em>files{k};<br>
+    fprintf(&#39;compilation of: %s\n&#39;, str);<br>
+    str = [str &#39; -outdir &#39; out_dir CPPFLAGS LDFLAGS LIBS];<br>
+    args = regexp(str, &#39;\s+&#39;, &#39;split&#39;);<br>
+    mex(args{:});<br>
+end 
+fprintf(&#39;Congratulations, compilation successful!!!\n&#39;);
+%----------------------------------------------------------------------------------------------
+```
+最后形成的命令为：</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">&gt;&gt; mex -g class_interface_mex.cpp codebook.cpp BGSub.cpp -IE:\opencv\build\include -IE:\op-encv\build\include\opencv2 -IE:\opencv\build\include\opencv -LE:\opencv\build\x64\vc12\lib -lopencv_core249 -lopencv_imgproc249 -lopencv_highgui249
+</code></pre></div>
+<p>-I为头文件的地址，-L为lib的地址，-l为需要的lib文件名字。</p>
+
+<p>注意库文件一定要么都是32位的要么都是64位的，混合的话会报错。</p>
+
+<p>2、mxarray与mat的转换
+二种方法，法一：
+由于matlab是由列先，而opencv是行先，且matlab数据会有不同，所以需要如下转换：</p>
+
+<p>matlab中调用的函数
+```
+function [cv<em>img, dim, depth, width</em>step] = convert<em>to</em>cv(img)</p>
+
+<p>% Exchange rows and columns (handles 3D cases as well)
+img2 = permute( img(:,end:-1:1,:), [2 1 3] );</p>
+
+<p>dim = [size(img2,1), size(img2,2)];</p>
+
+<p>% Convert double precision to single precision if necessary
+if( isa(img2, &#39;double&#39;) )
+    img2 = single(img2);
+end</p>
+
+<p>% Determine image depth
+if( ndims(img2) == 3 &amp;&amp; size(img2,3) == 3 )
+    depth = 3;
+else
+    depth = 1;
+end</p>
+
+<p>% Handle color images
+if(depth == 3 )
+    % Switch from RGB to BGR
+    img2(:,:,[3 2 1]) = img2;</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">% Interleave the colors
+img2 = reshape( permute(img2, [3 1 2]), [size(img2,1)*size(img2,3) size(img2,2)] );
+</code></pre></div>
+<p>end</p>
+
+<p>% Pad the image
+width<em>step = size(img2,1) + mod( size(img2,1), 4 );
+img3 = uint8(zeros(width</em>step, size(img2,2)));
+img3(1:size(img2,1), 1:size(img2,2)) = img2;</p>
+
+<p>cv_img = img3;</p>
+
+<p>% Output to openCV
+%cv<em>display(cv</em>img, dim, depth, width<em>step);
+<code>
+上面函数开始的时候将row和col交换了，这样就使得其先为行再为列
+c++的mexFunction中需要调用的函数
+</code>c++
+Mat mxarray2mat(const mxArray * in</em>image, const mxArray * in<em>dimensions, const mxArray * in</em>depth, const mxArray * in<em>width</em>step)
 {
-    return (a.x * b.y - a.y * b.x + b.x * k.y - b.y * k.x + k.x * a.y - k.y * a.x) &gt; 0 ? true : false;
-}
-</code>
-<strong>in_triangle:</strong>
-有了toleft（），我们可以进行点是否在多边形内的判断，比如三角形的话，点在内部则3对3边顺时针进行toleft测试要么都在左要么都在右。</p>
-</p>
-        </article>
-        <a href="/%E7%AE%97%E6%B3%95/2015/04/05/%E5%87%B8%E5%8C%85%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90.html" class="more"><i class="icon-link"></i></a>
-        <div class="info">
-            <span class="info-title"><i class="icon-calendar"></i> Published: </span>
-            <span class="info-date">05 Apr 2015</span>
-             <span class="info-title"><i class="icon-folder-open"></i> Category: </span>
-            <span class="info-link"><a href="/navigations/categories.html#算法-ref" >算法</a></span>
-        </div>
-    </div>
+    bool intInput = true;</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">if (mxIsUint8(in_image))
+    intInput = true;
+else if (mxIsSingle(in_image))
+    intInput = false;
+else
+    mexErrMsgTxt(&quot;Input should be a matrix of uint8 or single precision floats.&quot;);
 
-    <div class="article">
-        <h3 class="title"><a href="/%E7%A7%91%E7%A0%94/2015/04/05/sort%E7%AE%80%E5%8D%95%E5%88%86%E6%9E%90.html" title="sort简单分析">sort简单分析</a></h3>
-        <article class="rexp">
-            <p><p>排序算法分析（都以从小到大为例）：
-1、<strong>Insertsort:</strong>（原地排序）
-最坏情况：从大到小排列（逆序），6,5,4,3,2,1, 比较（移动次数要乘以3）次数=n*(n - 1) / 2;
-最好情况:从小到大排列（正序），1,2,3,4,5,6，比较次数 = n；
-平均情况：与最坏情况一样，为Θ（n^2）.
-算法稳定。</p>
-</p>
-        </article>
-        <a href="/%E7%A7%91%E7%A0%94/2015/04/05/sort%E7%AE%80%E5%8D%95%E5%88%86%E6%9E%90.html" class="more"><i class="icon-link"></i></a>
-        <div class="info">
-            <span class="info-title"><i class="icon-calendar"></i> Published: </span>
-            <span class="info-date">05 Apr 2015</span>
-             <span class="info-title"><i class="icon-folder-open"></i> Category: </span>
-            <span class="info-link"><a href="/navigations/categories.html#科研-ref" >科研</a></span>
-        </div>
-    </div>
+if (mxGetNumberOfElements(in_dimensions) != 2)
+    mexErrMsgTxt(&quot;Dimension vector should contain two elements: [width, height].&quot;);
 
-    <div class="article">
-        <h3 class="title"><a href="/%E7%A7%91%E7%A0%94/2015/04/05/opencv%20codebook%E5%AD%A6%E4%B9%A0.html" title="opencv codebook学习">opencv codebook学习</a></h3>
-        <article class="rexp">
-            <p><p>该算法对图像的每一个像素位置建立一个码本(codebook),每一个码本有多个码元（ce）多通道的，每一个码元都有自己的lowbound和upbound。在学习时候，对于每一张图片中的每一个像素，进行相应的码本匹配，如果像素值在码本中某码元的bound范围之内，那么只需要更新该码元的bound即可。如果在对应的码本中没有匹配的码元，那么证明背景是动态的，需要在此像素点的码本中建立新的码元。因此，在背景学习的过程中，每个像素点可以对应多个码元，这样就可以学到复杂的动态背景。
-1、学习过程
-2、检测过程</p>
-</p>
-        </article>
-        <a href="/%E7%A7%91%E7%A0%94/2015/04/05/opencv%20codebook%E5%AD%A6%E4%B9%A0.html" class="more"><i class="icon-link"></i></a>
-        <div class="info">
-            <span class="info-title"><i class="icon-calendar"></i> Published: </span>
-            <span class="info-date">05 Apr 2015</span>
-             <span class="info-title"><i class="icon-folder-open"></i> Category: </span>
-            <span class="info-link"><a href="/navigations/categories.html#科研-ref" >科研</a></span>
-        </div>
-    </div>
+char *matlabImage = (char *)mxGetData(in_image);
 
-    <div class="article">
-        <h3 class="title"><a href="/%E6%8A%80%E6%9C%AF/2014/09/20/java-concurrency.html" title="Java 中的并发">Java 中的并发</a></h3>
-        <article class="rexp">
-            <p><h2>如何创建一个线程</h2>
-</p>
-        </article>
-        <a href="/%E6%8A%80%E6%9C%AF/2014/09/20/java-concurrency.html" class="more"><i class="icon-link"></i></a>
-        <div class="info">
-            <span class="info-title"><i class="icon-calendar"></i> Published: </span>
-            <span class="info-date">20 Sep 2014</span>
-             <span class="info-title"><i class="icon-folder-open"></i> Category: </span>
-            <span class="info-link"><a href="/navigations/categories.html#技术-ref" >技术</a></span>
-        </div>
-    </div>
+double *imgSize = mxGetPr(in_dimensions);
+size_t width = (size_t)imgSize[0];
+size_t height = (size_t)imgSize[1];
 
+size_t depth = (size_t)*mxGetPr(in_depth);
+size_t widthStep = (size_t)*mxGetPr(in_width_step) * (intInput ? sizeof(unsigned char) : sizeof(float));
 
-    <nav class="pagination fn-clear">
-        <span class="pagination-icon"><i class=" icon-copy"></i></span>
-        <ul class="pagination-list">
-            
-                
-                    <li><a href="/">1</a></li>
-                
-            
-                
-                    <li class="current"><a href="javascript:void(0);">2</a></li>
-                
-            
-        </ul>
+CvSize size;
+size.height = height;
+size.width = width;
+
+IplImage *iplImage = cvCreateImageHeader(size, intInput ? IPL_DEPTH_8U : IPL_DEPTH_32F, depth);
+iplImage-&gt;imageData = matlabImage;
+iplImage-&gt;widthStep = widthStep;
+iplImage-&gt;imageDataOrigin = iplImage-&gt;imageData;
+
+/* Show the openCV image */
+Mat img(iplImage);
+return img;
+</code></pre></div>
+<p>}
+```</p>
+
+<p>然后直接在mexFunction中使用：</p>
+<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="cp">#define IN_IMAGE prhs[2]</span>
+<span class="cp">#define IN_DIMENSIONS prhs[3]</span>
+<span class="cp">#define IN_DEPTH prhs[4]</span>
+<span class="cp">#define IN_WIDTH_STEP prhs[5]</span>
+
+<span class="n">Mat</span> <span class="n">img</span> <span class="o">=</span> <span class="n">mxarray2mat</span><span class="p">(</span><span class="n">IN_IMAGE</span><span class="p">,</span> <span class="n">IN_DIMENSIONS</span><span class="p">,</span> <span class="n">IN_DEPTH</span><span class="p">,</span> <span class="n">IN_WIDTH_STEP</span><span class="p">);</span>
+</code></pre></div>
+<p><strong>法二：</strong>
+利用MxArray类来实现，非常方便：
+<a href="https://github.com/kyamagu/mexopencv">MxArray</a>实现了从matlab的格式到opencv格式的转换，十分方便，其中只需要里面的src/MxArray.cpp和include/MxArray.hpp加入自己的工程即可。</p>
+
+<p>3、调试
+打开matlab，然后打开vs，打开mexFunction所在的cpp文件，并在Debug-&gt;attach to process中选中matlab，然后在cpp中加上断点，在matlab中运行即可自动到达vs中进行调试。注意前面编译的时候mex一定要加-g参数。</p>
+
+<p><img src="http://img.blog.csdn.net/20150426191730131" alt="这里写图片描述"></p>
+
+    <nav class="article-previous fn-clear">
+        
+        <a class="prev" href="/%E7%AE%97%E6%B3%95/2015/04/07/%E5%AF%BB%E6%89%BE%E6%9C%80%E8%BF%91%E7%82%B9%E5%AF%B9.html" rel="bookmark">&laquo;&nbsp;寻找最近点对</a>
+        
+        
+        <a class="next" href="/%E7%A7%91%E7%A0%94/2015/04/26/vs2013%E8%B0%83%E7%94%A8matlab%E5%87%BD%E6%95%B0.html" rel="bookmark">vs2013调用matlab函数&nbsp;&raquo;</a>
+        
     </nav>
+    <div class="comment">
+        
+            
+        
+    </div>
+</div>
 
+
+                    
+                        <div id="disqus_thread"></div>
+ <script type="text/javascript">
+     /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+     var disqus_shortname = 'z6491679'; // required: replace example with your forum shortname
+
+     /* * * DON'T EDIT BELOW THIS LINE * * */
+     (function() {
+         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+         dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+         (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+     })();
+ </script>
+ <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    
 
                     
                 </div>
