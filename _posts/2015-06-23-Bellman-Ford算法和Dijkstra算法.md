@@ -6,7 +6,9 @@ comments: true
 ---
 Bellman-Ford算法是通过Relax边来实现的，由于最短无负权回路的路径应该最多有V-1条边，所以一共执行V-1次Relax操作即可，而且注意，每次Relax操作都只是基于上一次Relax操作之后的图，和这次Relax中已经Relax了的节点毫无关系（这个是重点！）.
 检查负权回路原理：若有负权回路，则经过V-1次relax之后relax还能减小消耗（路径值不会收敛）
+
 ```c++
+
 bool graph::Bellman_Ford(int start,int res_d[],int res_pre[])
 {
 	int d[1000];//记录到源点的距离

@@ -12,7 +12,7 @@
         -->
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
         <meta charset="utf-8">
-        <title>vs2013调用matlab函数 - Qilong Tech</title>
+        <title>最大流和最小割：Edmonds_Karp算法 - Qilong Tech</title>
         <!-- meta -->
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
         <meta name="generator" content="Jekyll" />
@@ -137,75 +137,109 @@
                 <div class="main">
                     
     <div class="article article-post">
-    <h2 class="title">vs2013调用matlab函数</h2>
+    <h2 class="title">最大流和最小割：Edmonds_Karp算法</h2>
     <div class="info">
         <span class="info-title"><i class="icon-calendar"></i> Published: </span>
-        <span class="info-date">26 Apr 2015</span>
+        <span class="info-date">23 Jun 2015</span>
         <span class="info-title"><i class="icon-folder-open"></i> Category: </span>
         <span class="info-link"><a href="/navigations/categories.html#科研-ref" >科研</a></span>
     </div>
-    <p><strong>法一（常用方法）：使用engine。</strong>
-添加matlab环境，这个网上都有，然后使用</p>
-<div class="highlight"><pre><code class="language-text" data-lang="text">    Engine *ep;
-    if(!(ep = engOpen(&quot;&quot;)))
-    {
-        cout &lt;&lt; &quot;ERROR&quot;;
-    }
-</code></pre></div>
-<p>打开engine，下面主要介绍如何将参数传进去（主要是c++中的类）：
-mxCreateStructMatrix函数：</p>
-<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="n">mxArray</span> <span class="o">*</span><span class="nf">mxCreateStructMatrix</span><span class="p">(</span><span class="n">mwSize</span> <span class="n">m</span><span class="p">,</span> <span class="n">mwSize</span> <span class="n">n</span><span class="p">,</span> <span class="kt">int</span> <span class="n">nfields</span><span class="p">,</span> 
-         <span class="k">const</span> <span class="kt">char</span> <span class="o">**</span><span class="n">fieldnames</span><span class="p">);</span>
-</code></pre></div>
-<p>m为要建立的结构体的个数，n为结构体的每个成员变量的数组数（这个一般就是1！！！若是2则会出现现params.xxx有2个cell），nfields为成员变量的个数，fieldnames为成员变量名）：</p>
+    <p>最大流：从s-&gt;t可以通过的最大流量
+最小割:将图用一条直线切断，并将s和t分到不同的2边，此为一个割，割会经过图中的边，这些边的容量（只算从s-&gt;t方向的）总和为c，当c最小时，此割即为最小割.可以证明，最大流=最小割的容量！（这就是Ford_Fulkerson定理）.</p>
 
-<p>mxSetField（）函数：
-<code>c++
-void mxSetField(mxArray *array_ptr, int index, 
-  const char *field_name, mxArray *value);
-</code>
-array_ptr为struct指针，index为数组索引，即上面说的那个n，在create的时候如果设置为1表示此成员在此struct里面就一个，故set的时候index = 0（c++从0开始索引）.</p>
-<div class="highlight"><pre><code class="language-c++" data-lang="c++">    <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">fields</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&quot;padding&quot;</span><span class="p">,</span> <span class="s">&quot;output_sigma_factor&quot;</span><span class="p">,</span> <span class="s">&quot;sigma&quot;</span><span class="p">,</span> <span class="s">&quot;lambda&quot;</span><span class="p">,</span> <span class="s">&quot;learning_rate&quot;</span><span class="p">,</span> <span class="s">&quot;compression_learning_rate&quot;</span><span class="p">,</span> <span class="s">&quot;non_compressed_features&quot;</span><span class="p">,</span> <span class="s">&quot;compressed_features&quot;</span><span class="p">,</span> <span class="s">&quot;num_compressed_dim&quot;</span><span class="p">,</span> <span class="s">&quot;w2c&quot;</span><span class="p">,</span> <span class="s">&quot;pos&quot;</span><span class="p">,</span><span class="s">&quot;z_npca&quot;</span><span class="p">,</span> <span class="s">&quot;z_pca&quot;</span><span class="p">,</span> <span class="s">&quot;alphaf_num&quot;</span><span class="p">,</span> <span class="s">&quot;alphaf_den&quot;</span><span class="p">,</span> <span class="s">&quot;old_cov_matrix&quot;</span><span class="p">,</span> <span class="s">&quot;projection_matrix&quot;</span><span class="p">,</span> <span class="s">&quot;positions&quot;</span><span class="p">,</span> <span class="s">&quot;max_response&quot;</span><span class="p">,</span><span class="s">&quot;im&quot;</span><span class="p">,</span><span class="s">&quot;target_sz&quot;</span><span class="p">,</span><span class="s">&quot;sz&quot;</span><span class="p">};</span>
-    <span class="n">mxArray</span> <span class="o">*</span><span class="n">params</span> <span class="o">=</span> <span class="n">mxCreateStructMatrix</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">22</span><span class="p">,</span> <span class="n">fields</span><span class="p">);</span>
+<h2>Ford_Fulkerson方法</h2>
 
-    <span class="n">mxSetField</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;padding&quot;</span><span class="p">,</span> <span class="n">mxCreateDoubleScalar</span><span class="p">(</span><span class="mf">1.0</span><span class="p">));</span>
-    <span class="n">mxSetField</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;output_sigma_factor&quot;</span><span class="p">,</span> <span class="n">mxCreateDoubleScalar</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="mi">16</span><span class="p">));</span>
-    <span class="n">mxSetField</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;sigma&quot;</span><span class="p">,</span> <span class="n">mxCreateDoubleScalar</span><span class="p">(</span><span class="mf">0.2</span><span class="p">));</span>
-    <span class="n">mxSetField</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;lambda&quot;</span><span class="p">,</span> <span class="n">mxCreateDoubleScalar</span><span class="p">(</span><span class="mf">1e-2</span><span class="p">));</span>
-    <span class="n">mxSetField</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;learning_rate&quot;</span><span class="p">,</span> <span class="n">mxCreateDoubleScalar</span><span class="p">(</span><span class="mf">0.075</span><span class="p">));</span>
-    <span class="n">mxSetField</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;compression_learning_rate&quot;</span><span class="p">,</span> <span class="n">mxCreateDoubleScalar</span><span class="p">(</span><span class="mf">0.15</span><span class="p">));</span>
-    <span class="n">mxSetField</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;non_compressed_features&quot;</span><span class="p">,</span> <span class="n">mxCreateString</span><span class="p">(</span><span class="s">&quot;gray&quot;</span><span class="p">));</span>
-    <span class="n">mxSetField</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;compressed_features&quot;</span><span class="p">,</span> <span class="n">mxCreateString</span><span class="p">(</span><span class="s">&quot;cn&quot;</span><span class="p">));</span>
-    <span class="n">mxSetField</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;num_compressed_dim&quot;</span><span class="p">,</span> <span class="n">mxCreateDoubleScalar</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span>
-    <span class="n">mxSetField</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;w2c&quot;</span><span class="p">,</span> <span class="n">pMxArray</span><span class="p">);</span>
-    <span class="p">.......</span>
-</code></pre></div>
-<p><strong>法二：建立c++ shared library</strong>
-此方法老是出现问题在调试的时候竟然是opencv的函数出了问题。。。。。
-步骤：
-1.matlab命令行输入deploytool
-2.选择Library Compiler
-3.建立compiler
-<img src="http://img.blog.csdn.net/20150505185924398" alt="这里写图片描述">
-4.此过程大概会有好几分钟到几十分钟，然后得到如下几个文件：
-<img src="http://img.blog.csdn.net/20150505185843125" alt="这里写图片描述">
-在for<em>testing或者for</em>redistribution<em>files</em>only里找到下面3个文件：
-<img src="http://img.blog.csdn.net/20150505190127135" alt="这里写图片描述"></p>
+<p>此为求最大流的基本方法，通过在残留网络中找增广路径不断迭代来求解最大流，在寻找增广路径的时候会有不同的方式，当选择BFS方式的时候则即为Edmonds_Karp算法。
+<img src="http://img.blog.csdn.net/20150623194904366" alt="">
+                                        左边为每次的残留网络，右边为current-graph</p>
 
-<p>这3个文件事实上就是自己的库了，然后照添加库的操作把其添加到自己的环境中即可。我的方法：将dll文件拖入c:\system32中（或者通过动态链接库来做，不过c++做这个比较麻烦，直接拖最快），.lib的文件路径直接加到vc directory中，然后.h文件加入工程。
-5调用的时候需要初始化，并且任何根matlab数据结构有关的操作都应该是在....之中，否则会报错，无法初始化：</p>
-<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="n">mclInitializeApplication</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
-<span class="n">xxxxInitialize</span><span class="p">();</span>
-<span class="p">....</span>
-<span class="n">xxxxTerminate</span><span class="p">();</span>
-<span class="n">mclTerminateApplication</span><span class="p">();</span>
+<p><strong>Edmonds_Karp算法</strong>
+通过BFS的方式来进行增广路径的查找，即每次找步数最少的路径进行残留网络的修改，此方法的复杂度为O(VE^2).</p>
+<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="kt">int</span> <span class="n">graph</span><span class="o">::</span><span class="n">Edmonds_Karp</span><span class="p">(</span><span class="kt">int</span> <span class="n">start</span><span class="p">,</span> <span class="kt">int</span> <span class="n">end</span><span class="p">,</span> <span class="kt">int</span> <span class="n">remain_g</span><span class="p">[][</span><span class="mi">1000</span><span class="p">],</span> <span class="kt">int</span> <span class="n">current_g</span><span class="p">[][</span><span class="mi">1000</span><span class="p">])</span><span class="c1">//按BFS找增广路径(即每次找边数最短的)实现Ford_Fulkerson方法</span>
+<span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">Pnum</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">Pnum</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">edge</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="n">INF</span><span class="p">)</span>
+                <span class="n">remain_g</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="k">else</span>
+                <span class="n">remain_g</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">edge</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">];</span>
+        <span class="p">}</span>
+    <span class="kt">int</span> <span class="n">max_flow</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">visit</span><span class="p">[</span><span class="mi">1000</span><span class="p">];</span>
+        <span class="kt">int</span> <span class="n">pre</span><span class="p">[</span><span class="mi">1000</span><span class="p">];</span><span class="c1">//记录节点的前驱，好找路径,其实这里的visit可以不要,就用pre</span>
+        <span class="n">memset</span><span class="p">(</span><span class="n">visit</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">visit</span><span class="p">));</span>
+        <span class="n">memset</span><span class="p">(</span><span class="n">pre</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">pre</span><span class="p">));</span>
+        <span class="c1">//bfs在残留网络中找增广路径</span>
+        <span class="n">queue</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">q</span><span class="p">;</span>
+        <span class="n">q</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">start</span><span class="p">);</span>
+        <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="n">q</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span>
+        <span class="p">{</span>
+            <span class="kt">int</span> <span class="n">temp_point</span> <span class="o">=</span> <span class="n">q</span><span class="p">.</span><span class="n">front</span><span class="p">();</span>
+            <span class="n">q</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">temp_point</span> <span class="o">==</span> <span class="n">end</span><span class="p">)</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">Pnum</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">remain_g</span><span class="p">[</span><span class="n">temp_point</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">visit</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="p">{</span>
+                    <span class="n">q</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+                    <span class="n">pre</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">temp_point</span><span class="p">;</span>
+                    <span class="n">visit</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="c1">//更新残留网络</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">pre</span><span class="p">[</span><span class="n">end</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span><span class="c1">//end的前驱没有更新，证明没有增广路径了</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="kt">int</span> <span class="n">min</span> <span class="o">=</span> <span class="n">INF</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">temp_point</span> <span class="o">=</span> <span class="n">end</span><span class="p">;</span> <span class="n">temp_point</span> <span class="o">!=</span> <span class="n">start</span><span class="p">;</span> <span class="n">temp_point</span> <span class="o">=</span> <span class="n">pre</span><span class="p">[</span><span class="n">temp_point</span><span class="p">])</span>
+            <span class="n">min</span> <span class="o">=</span> <span class="n">zzMin</span><span class="p">(</span><span class="n">remain_g</span><span class="p">[</span><span class="n">pre</span><span class="p">[</span><span class="n">temp_point</span><span class="p">]][</span><span class="n">temp_point</span><span class="p">],</span> <span class="n">min</span><span class="p">);</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">temp_point</span> <span class="o">=</span> <span class="n">end</span><span class="p">;</span> <span class="n">temp_point</span> <span class="o">!=</span> <span class="n">start</span><span class="p">;</span> <span class="n">temp_point</span> <span class="o">=</span> <span class="n">pre</span><span class="p">[</span><span class="n">temp_point</span><span class="p">])</span>
+        <span class="p">{</span>
+            <span class="n">remain_g</span><span class="p">[</span><span class="n">pre</span><span class="p">[</span><span class="n">temp_point</span><span class="p">]][</span><span class="n">temp_point</span><span class="p">]</span> <span class="o">-=</span> <span class="n">min</span><span class="p">;</span>
+            <span class="n">remain_g</span><span class="p">[</span><span class="n">temp_point</span><span class="p">][</span><span class="n">pre</span><span class="p">[</span><span class="n">temp_point</span><span class="p">]]</span> <span class="o">=</span> <span class="n">min</span><span class="p">;</span><span class="c1">//此为负向边</span>
+        <span class="p">}</span>
+        <span class="n">max_flow</span> <span class="o">+=</span> <span class="n">min</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">max_flow</span><span class="p">;</span>
+<span class="p">}</span>
 </code></pre></div>
+<p>在找到最大流后如何寻找最小割：
+在求得最大流后得到残留网络，从s开始进行bfs，并将所有经过的点标记，然后在残留网络中找到连接标记的点和非标记的点的边，经过这些边的直线即为一个最小割.(这些边事实上就已经是满流量了,即流量=容量).</p>
+<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="c1">//remain_g为找到最大流后得到的残留网络</span>
+<span class="kt">bool</span> <span class="n">graph</span><span class="o">::</span><span class="n">Find_Min_Cut</span><span class="p">(</span><span class="kt">int</span> <span class="n">start</span><span class="p">,</span><span class="kt">int</span> <span class="n">remain_g</span><span class="p">[][</span><span class="mi">1000</span><span class="p">],</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">s_set</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">t_set</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">visit</span><span class="p">[</span><span class="mi">1000</span><span class="p">];</span>
+    <span class="n">memset</span><span class="p">(</span><span class="n">visit</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">visit</span><span class="p">));</span>
+    <span class="n">queue</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">s</span><span class="p">;</span>
+    <span class="n">s</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">start</span><span class="p">);</span>
+    <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="n">s</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span>
+    <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">temp_point</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">front</span><span class="p">();</span>
+        <span class="n">s</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">Pnum</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">remain_g</span><span class="p">[</span><span class="n">temp_point</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">visit</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="p">{</span>
+                <span class="n">s</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+                <span class="n">visit</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+                <span class="n">s_set</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+            <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">Pnum</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">visit</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">t_set</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>此方法为Graph cut的基础，非常重要！</p>
+
     <nav class="article-previous fn-clear">
         
-        <a class="prev" href="/%E7%AE%97%E6%B3%95/2015/04/26/matlab%202014b%20%E8%B0%83%E7%94%A8%20vs2013%20+%20opencv%E6%B7%B7%E5%90%88%E7%BC%96%E7%A8%8B%E9%85%8D%E7%BD%AE%E3%80%81mat%20%E4%B8%8E%20mxarray%E7%9A%84%E8%BD%AC%E6%8D%A2%E3%80%81matlab%E5%9C%A8vs2013%E4%B8%AD%E8%B0%83%E8%AF%95.html" rel="bookmark">&laquo;&nbsp;matlab 2014b 调用 vs2013 +...</a>
+        <a class="prev" href="/%E7%AE%97%E6%B3%95/2015/06/23/Bellman-Ford%E7%AE%97%E6%B3%95%E5%92%8CDijkstra%E7%AE%97%E6%B3%95.html" rel="bookmark">&laquo;&nbsp;Bellman-Ford算法和Dijkstra算法</a>
         
-        
-        <a class="next" href="/%E7%AE%97%E6%B3%95/2015/04/28/%E5%9B%BE%E4%BB%A5%E5%8F%8ADFS%E5%92%8CBFS.html" rel="bookmark">图以及DFS和BFS&nbsp;&raquo;</a>
         
     </nav>
     <div class="comment">
