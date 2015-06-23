@@ -12,7 +12,7 @@
         -->
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
         <meta charset="utf-8">
-        <title>文章目录 - Qilong Tech</title>
+        <title>FLOYD算法 - Qilong Tech</title>
         <!-- meta -->
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
         <meta name="generator" content="Jekyll" />
@@ -136,205 +136,72 @@
             <div class="container fn-clear">
                 <div class="main">
                     
-	
-    <div class="article">
-        <h3 class="title"><a href="/%E7%AE%97%E6%B3%95/2015/06/23/Bellman-Ford%E7%AE%97%E6%B3%95%E5%92%8CDijkstra%E7%AE%97%E6%B3%95.html" title="Bellman-Ford算法和Dijkstra算法">Bellman-Ford算法和Dijkstra算法</a></h3>
-        <article class="rexp">
-            <p><p>Bellman-Ford算法是通过Relax边来实现的，由于最短无负权回路的路径应该最多有V-1条边，所以一共执行V-1次Relax操作即可，而且注意，每次Relax操作都只是基于上一次Relax操作之后的图，和这次Relax中已经Relax了的节点毫无关系（这个是重点！）.
-检查负权回路原理：若有负权回路，则经过V-1次relax之后relax还能减小消耗（路径值不会收敛）
-<code>c++
-bool graph::Bellman_Ford(int start,int res_d[],int res_pre[])
-{
-    int d[1000];//记录到源点的距离
-    int pre[1000];//记录其前驱节点
-    for (int i = 0; i &lt; Pnum; i++)//初始化，距离初源点外都为无穷大，源点为0
-    {
-        if (i == start)
-        {
-            d[i] = 0;
-            pre[i] = i;
-        }
-        else
-        {
-            d[i] = INF;
-            pre[i] = INF;
-        }
-    }
-    for (int k = 0; k &lt; Pnum - 1; k++)
-    {
-        for (int i = 0; i &lt; Pnum; i++)
-        {
-            for (int j = 0; j &lt; edge_set[i].size(); j++)
-            {
-                int end = edge_set[i][j].end;
-                if (d[end] &gt; d[i] + edge_set[i][j].value)//每次松弛的时候仅在上一次的图上进行
-                {
-                    int a = d[i] + edge_set[i][j].value;
-                    res_d[end] = d[i] + edge_set[i][j].value;
-                    res_pre[end] = i;
-                }
-            }
-        }
-        for (int i = 0; i &lt; Pnum; i++)
-        {
-            d[i] = res_d[i];
-            pre[i] = res_pre[i];
-        }
-    }
-    //检查是否有源可达的负权回路
-    for (int i = 0; i &lt; Pnum; i++)
-    {
-        for (int j = 0; j &lt; edge_set[i].size(); j++)
-        {
-            int end = edge_set[i][j].end;
-            if (d[end] &gt; d[i] + edge_set[i][j].value)//证明还可以松弛，证明最短路径无法收敛，有负权回路
-                return false;
-        }
-    }
-    return true;
-}
-</code></p>
-</p>
-        </article>
-        <a href="/%E7%AE%97%E6%B3%95/2015/06/23/Bellman-Ford%E7%AE%97%E6%B3%95%E5%92%8CDijkstra%E7%AE%97%E6%B3%95.html" class="more"><i class="icon-link"></i></a>
-        <div class="info">
-            <span class="info-title"><i class="icon-calendar"></i> Published: </span>
-            <span class="info-date">23 Jun 2015</span>
-             <span class="info-title"><i class="icon-folder-open"></i> Category: </span>
-            <span class="info-link"><a href="/navigations/categories.html#算法-ref" >算法</a></span>
-        </div>
+    <div class="article article-post">
+    <h2 class="title">FLOYD算法</h2>
+    <div class="info">
+        <span class="info-title"><i class="icon-calendar"></i> Published: </span>
+        <span class="info-date">09 Jun 2015</span>
+        <span class="info-title"><i class="icon-folder-open"></i> Category: </span>
+        <span class="info-link"><a href="/navigations/categories.html#算法-ref" >算法</a></span>
     </div>
+    <p>此为动态规划的思想，通过比较dist[i][j]与dist[i][k] + dist[k][j]来选择，而且k必须是外层循环，因为其是以k为子问题的，如果k在最里层，则很多子问题都没有算到。图的表示是矩阵表示，无直接边则为INF，自己到自己的距离为0.</p>
+<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="c1">//dist初始时有边的为正值，无边为INF，mid初始时都为0；mid的值应该是j的直接前驱，即i-&gt;……-&gt;mid-&gt;j</span>
+<span class="kt">void</span> <span class="n">graph</span><span class="o">::</span><span class="n">floyd</span><span class="p">(</span><span class="kt">int</span> <span class="n">dist</span><span class="p">[][</span><span class="mi">1000</span><span class="p">],</span> <span class="kt">int</span> <span class="n">mid</span><span class="p">[][</span><span class="mi">1000</span><span class="p">])</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">e_num</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">Enum</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">p_num</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">Pnum</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">Pnum</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">Pnum</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">dist</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">edge</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">];</span>
+            <span class="n">mid</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span><span class="c1">//这里的mid记录的是前驱，当ij直接相连的时候，j的前驱就是i</span>
+        <span class="p">}</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="n">p_num</span><span class="p">;</span> <span class="n">k</span><span class="o">++</span><span class="p">)</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">p_num</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">p_num</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">dist</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">dist</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">+</span> <span class="n">dist</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">j</span><span class="p">])</span>
+                <span class="p">{</span>
+                    <span class="n">dist</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">dist</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">+</span> <span class="n">dist</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">j</span><span class="p">];</span>
+                    <span class="n">mid</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">k</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>打印的时候只需要对于 最短路径 1-&gt;5-&gt;4-&gt;3-&gt;6 有 mid[1][6] = 3; mid[1][3]= 4; mid[1][4] = 5; paht[1][5] =1 如此逆推不难得到 最短路径记录值 。</p>
 
-    <div class="article">
-        <h3 class="title"><a href="/%E7%AE%97%E6%B3%95/2015/06/21/DFS%E5%BA%94%E7%94%A8%EF%BC%9A%E5%9B%BE%E7%9A%84%E6%8B%93%E6%89%91%E6%8E%92%E5%BA%8F%E4%BB%A5%E5%8F%8AKosaraju%E5%BC%BA%E8%BF%9E%E9%80%9A%E5%88%86%E9%87%8F%E7%AE%97%E6%B3%95.html" title="DFS应用：图的拓扑排序以及Kosaraju强连通分量算法">DFS应用：图的拓扑排序以及Kosaraju强连通分量算法</a></h3>
-        <article class="rexp">
-            <p><p>图的DFS算法对于每一个图节点u有2个重要的时间d[u]和f[u],分别代表找到u的时间(其变为灰色节点的时间)以及u完成的时间（其变为黑色节点的时间）.
-f[u]越大可能其在最上面（树根处），所以要等其所有子孙都完成其才能完成.</p>
-
-<h2>1、拓扑排序</h2>
-
-<p>对于一个图，找拓扑排序的方法就是通过按照完成时间f[u]的递减顺序即为一个拓扑排序:</p>
-</p>
-        </article>
-        <a href="/%E7%AE%97%E6%B3%95/2015/06/21/DFS%E5%BA%94%E7%94%A8%EF%BC%9A%E5%9B%BE%E7%9A%84%E6%8B%93%E6%89%91%E6%8E%92%E5%BA%8F%E4%BB%A5%E5%8F%8AKosaraju%E5%BC%BA%E8%BF%9E%E9%80%9A%E5%88%86%E9%87%8F%E7%AE%97%E6%B3%95.html" class="more"><i class="icon-link"></i></a>
-        <div class="info">
-            <span class="info-title"><i class="icon-calendar"></i> Published: </span>
-            <span class="info-date">21 Jun 2015</span>
-             <span class="info-title"><i class="icon-folder-open"></i> Category: </span>
-            <span class="info-link"><a href="/navigations/categories.html#算法-ref" >算法</a></span>
-        </div>
-    </div>
-
-    <div class="article">
-        <h3 class="title"><a href="/%E7%A7%91%E7%A0%94/2015/06/17/possion.html" title="Poisson Image Editing">Poisson Image Editing</a></h3>
-        <article class="rexp">
-            <p><p>source：
-<img src="http://i.imgur.com/NhYIb4J.jpg" alt=""></p>
-</p>
-        </article>
-        <a href="/%E7%A7%91%E7%A0%94/2015/06/17/possion.html" class="more"><i class="icon-link"></i></a>
-        <div class="info">
-            <span class="info-title"><i class="icon-calendar"></i> Published: </span>
-            <span class="info-date">17 Jun 2015</span>
-             <span class="info-title"><i class="icon-folder-open"></i> Category: </span>
-            <span class="info-link"><a href="/navigations/categories.html#科研-ref" >科研</a></span>
-        </div>
-    </div>
-
-    <div class="article">
-        <h3 class="title"><a href="/%E7%AE%97%E6%B3%95/2015/06/09/FLOYD%E7%AE%97%E6%B3%95.html" title="FLOYD算法">FLOYD算法</a></h3>
-        <article class="rexp">
-            <p><p>此为动态规划的思想，通过比较dist[i][j]与dist[i][k] + dist[k][j]来选择，而且k必须是外层循环，因为其是以k为子问题的，如果k在最里层，则很多子问题都没有算到。图的表示是矩阵表示，无直接边则为INF，自己到自己的距离为0.</p>
-</p>
-        </article>
-        <a href="/%E7%AE%97%E6%B3%95/2015/06/09/FLOYD%E7%AE%97%E6%B3%95.html" class="more"><i class="icon-link"></i></a>
-        <div class="info">
-            <span class="info-title"><i class="icon-calendar"></i> Published: </span>
-            <span class="info-date">09 Jun 2015</span>
-             <span class="info-title"><i class="icon-folder-open"></i> Category: </span>
-            <span class="info-link"><a href="/navigations/categories.html#算法-ref" >算法</a></span>
-        </div>
-    </div>
-
-    <div class="article">
-        <h3 class="title"><a href="/%E7%A7%91%E7%A0%94/2015/05/13/c++%20matlab%E6%B7%B7%E5%90%88%E7%BC%96%E7%A8%8B%E6%97%B6mxArray%20%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2%E9%97%AE%E9%A2%98.html" title="c++ matlab混合编程时mxArray 内存泄露问题">c++ matlab混合编程时mxArray 内存泄露问题</a></h3>
-        <article class="rexp">
-            <p><p>对于mxArray在创建完后若使用完一定要注意回收空间，不然会memory leak.如果是mxstruct，只要对其中的field进行了赋值操作，那么其原先的field一定要先进行memory的回收！</p>
-</p>
-        </article>
-        <a href="/%E7%A7%91%E7%A0%94/2015/05/13/c++%20matlab%E6%B7%B7%E5%90%88%E7%BC%96%E7%A8%8B%E6%97%B6mxArray%20%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2%E9%97%AE%E9%A2%98.html" class="more"><i class="icon-link"></i></a>
-        <div class="info">
-            <span class="info-title"><i class="icon-calendar"></i> Published: </span>
-            <span class="info-date">13 May 2015</span>
-             <span class="info-title"><i class="icon-folder-open"></i> Category: </span>
-            <span class="info-link"><a href="/navigations/categories.html#科研-ref" >科研</a></span>
-        </div>
-    </div>
-
-    <div class="article">
-        <h3 class="title"><a href="/%E7%AE%97%E6%B3%95/2015/05/13/Vertex%20cover%20problem%EF%BC%88NP%EF%BC%89%E7%AE%97%E6%B3%95%E6%98%AF%E5%A4%9A%E9%A1%B9%E5%BC%8F%E7%9A%84%EF%BC%9F.html" title="Vertex cover problem（NP）算法是多项式的？">Vertex cover problem（NP）算法是多项式的？</a></h3>
-        <article class="rexp">
-            <p><p>3.1. Procedure. Given a simple graph G with n vertices and a vertex cover C of G, if C has no removable vertices, output C. Else, for each removable vertex v of C, find the number ρ(C−{v}) of removable vertices of the vertex cover C−{v}. Let vmax denote a removable vertex such that ρ(C−{vmax}) is a maximum and obtain the vertex cover C−{vmax}. Repeat until the vertex cover has no removable vertices.</p>
-</p>
-        </article>
-        <a href="/%E7%AE%97%E6%B3%95/2015/05/13/Vertex%20cover%20problem%EF%BC%88NP%EF%BC%89%E7%AE%97%E6%B3%95%E6%98%AF%E5%A4%9A%E9%A1%B9%E5%BC%8F%E7%9A%84%EF%BC%9F.html" class="more"><i class="icon-link"></i></a>
-        <div class="info">
-            <span class="info-title"><i class="icon-calendar"></i> Published: </span>
-            <span class="info-date">13 May 2015</span>
-             <span class="info-title"><i class="icon-folder-open"></i> Category: </span>
-            <span class="info-link"><a href="/navigations/categories.html#算法-ref" >算法</a></span>
-        </div>
-    </div>
-
-    <div class="article">
-        <h3 class="title"><a href="/%E7%94%9F%E6%B4%BB/2015/05/10/life.html" title="飞鸟集">飞鸟集</a></h3>
-        <article class="rexp">
-            <p><h1>第一首</h1>
-</p>
-        </article>
-        <a href="/%E7%94%9F%E6%B4%BB/2015/05/10/life.html" class="more"><i class="icon-link"></i></a>
-        <div class="info">
-            <span class="info-title"><i class="icon-calendar"></i> Published: </span>
-            <span class="info-date">10 May 2015</span>
-             <span class="info-title"><i class="icon-folder-open"></i> Category: </span>
-            <span class="info-link"><a href="/navigations/categories.html#生活-ref" >生活</a></span>
-        </div>
-    </div>
-
-    <div class="article">
-        <h3 class="title"><a href="/%E7%A7%91%E7%A0%94/2015/05/07/Matlab%E7%9A%84%E7%9F%A9%E9%98%B5%E5%AD%98%E5%82%A8%E5%92%8Copencv%20mat%E7%9A%84%E5%8C%BA%E5%88%AB.html" title="Matlab的矩阵存储和opencv mat的区别">Matlab的矩阵存储和opencv mat的区别</a></h3>
-        <article class="rexp">
-            <p><p>在matlab中是按列存储的，其[x y]对应于opencv的为[纵坐标 横坐标]，所以对于opencv的Rect(int x,int y,int width,int height)结构而言，在matlab中应该是pos[y,x,height,width].
-一张宽720 长526的图片在matlab中为526<em>720.
-<img src="http://img.blog.csdn.net/20150507104358624" alt="这里写图片描述">
-总而言之：</em><em>matlab中第一个坐标代表的是长（纵轴、y），第二个坐标代表的是宽(横轴、x)</em>*</p>
-</p>
-        </article>
-        <a href="/%E7%A7%91%E7%A0%94/2015/05/07/Matlab%E7%9A%84%E7%9F%A9%E9%98%B5%E5%AD%98%E5%82%A8%E5%92%8Copencv%20mat%E7%9A%84%E5%8C%BA%E5%88%AB.html" class="more"><i class="icon-link"></i></a>
-        <div class="info">
-            <span class="info-title"><i class="icon-calendar"></i> Published: </span>
-            <span class="info-date">07 May 2015</span>
-             <span class="info-title"><i class="icon-folder-open"></i> Category: </span>
-            <span class="info-link"><a href="/navigations/categories.html#科研-ref" >科研</a></span>
-        </div>
-    </div>
-
-
-    <nav class="pagination fn-clear">
-        <span class="pagination-icon"><i class=" icon-copy"></i></span>
-        <ul class="pagination-list">
-            
-                
-                    <li class="current"><a href="javascript:void(0);">1</a></li>
-                
-            
-                
-                    <li><a href="/page2/">2</a></li>
-                
-            
-        </ul>
+    <nav class="article-previous fn-clear">
+        
+        <a class="prev" href="/%E7%A7%91%E7%A0%94/2015/05/13/c++%20matlab%E6%B7%B7%E5%90%88%E7%BC%96%E7%A8%8B%E6%97%B6mxArray%20%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2%E9%97%AE%E9%A2%98.html" rel="bookmark">&laquo;&nbsp;c++ matlab混合编程时mxArray 内存泄露问题</a>
+        
+        
+        <a class="next" href="/%E7%A7%91%E7%A0%94/2015/06/17/possion.html" rel="bookmark">Poisson Image Editing&nbsp;&raquo;</a>
+        
     </nav>
+    <div class="comment">
+        
+            
+        
+    </div>
+</div>
 
+
+                    
+                        <div id="disqus_thread"></div>
+ <script type="text/javascript">
+     /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+     var disqus_shortname = 'z6491679'; // required: replace example with your forum shortname
+
+     /* * * DON'T EDIT BELOW THIS LINE * * */
+     (function() {
+         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+         dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+         (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+     })();
+ </script>
+ <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    
 
                     
                 </div>

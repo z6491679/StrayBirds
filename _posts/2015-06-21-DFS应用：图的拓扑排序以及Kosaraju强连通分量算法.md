@@ -1,7 +1,7 @@
 ---
 layout: post
 title: DFS应用：图的拓扑排序以及Kosaraju强连通分量算法
-category: 科研
+category: 算法
 comments: true
 ---
 
