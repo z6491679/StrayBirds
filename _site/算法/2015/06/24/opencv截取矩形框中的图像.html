@@ -12,7 +12,7 @@
         -->
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
         <meta charset="utf-8">
-        <title>Matlab的矩阵存储和opencv mat的区别 - Qilong Tech</title>
+        <title>opencv截取矩形框中的图像 - Qilong Tech</title>
         <!-- meta -->
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
         <meta name="generator" content="Jekyll" />
@@ -137,24 +137,116 @@
                 <div class="main">
                     
     <div class="article article-post">
-    <h2 class="title">Matlab的矩阵存储和opencv mat的区别</h2>
+    <h2 class="title">opencv截取矩形框中的图像</h2>
     <div class="info">
         <span class="info-title"><i class="icon-calendar"></i> Published: </span>
-        <span class="info-date">07 May 2015</span>
+        <span class="info-date">24 Jun 2015</span>
         <span class="info-title"><i class="icon-folder-open"></i> Category: </span>
-        <span class="info-link"><a href="/navigations/categories.html#科研-ref" >科研</a></span>
+        <span class="info-link"><a href="/navigations/categories.html#算法-ref" >算法</a></span>
     </div>
-    <p>在matlab中是按列存储的，其[x y]对应于opencv的为[纵坐标 横坐标]，所以对于opencv的Rect(int x,int y,int width,int height)结构而言，在matlab中应该是pos[y,x,height,width].
-一张宽720 长526的图片在matlab中为526<em>720.
-<img src="http://img.blog.csdn.net/20150507104358624" alt="这里写图片描述">
-总而言之：</em><em>matlab中第一个坐标代表的是长（纵轴、y），第二个坐标代表的是宽(横轴、x)</em>*</p>
+    <div class="highlight"><pre><code class="language-text" data-lang="text">#include &lt;opencv\cv.h&gt;
+#include &lt;opencv/highgui.h&gt;
+#include &lt;iostream&gt;
 
+
+using namespace std;
+using namespace cv;
+
+Mat org,img,tmp,dst;
+
+Rect rect;
+
+void on_mouse(int event, int x, int y, int flags, void* ustc)
+{
+    static CvPoint pre_pt = { -1, -1 };
+    static CvPoint cur_pt = { -1, -1 };
+    char temp[16];
+
+    if (event == CV_EVENT_LBUTTONDOWN)
+    {
+        org.copyTo(img);
+        /*cvCopy(org, img);*/
+        sprintf(temp, &quot;(%d,%d)&quot;, x, y);
+        pre_pt = cvPoint(x, y);
+        putText(img, temp, pre_pt, 1,1, Scalar(0, 0, 255),1);
+        circle(img, pre_pt, 3, cvScalar(255, 0, 0, 0), CV_FILLED, CV_AA, 0);
+        imshow(&quot;img&quot;, img);
+        img.copyTo(tmp);
+    }
+    else if (event == CV_EVENT_MOUSEMOVE &amp;&amp; !(flags &amp; CV_EVENT_FLAG_LBUTTON))
+    {
+        tmp.copyTo(img);
+        sprintf(temp, &quot;(%d,%d)&quot;, x, y);
+        cur_pt = cvPoint(x, y);
+        putText(img, temp, cur_pt, 1, 1, Scalar(0, 0, 255), 1);
+        imshow(&quot;img&quot;, img);
+    }
+    else if (event == CV_EVENT_MOUSEMOVE &amp;&amp; (flags &amp; CV_EVENT_FLAG_LBUTTON))
+    {
+        tmp.copyTo(img);
+        sprintf(temp, &quot;(%d,%d)&quot;, x, y);
+        cur_pt = cvPoint(x, y);
+        putText(img, temp, cur_pt, 1, 1, Scalar(0, 0, 255), 1);
+        rectangle(img, pre_pt, cur_pt, cvScalar(0, 255, 0, 0), 1, 8, 0);
+        imshow(&quot;img&quot;, img);
+    }
+    else if (event == CV_EVENT_LBUTTONUP)
+    {
+        tmp.copyTo(img);
+        sprintf(temp, &quot;(%d,%d)&quot;, x, y);
+        cur_pt = cvPoint(x, y);
+        putText(img, temp, cur_pt, 1, 1, Scalar(0, 0, 255), 1);
+        circle(img, cur_pt, 3, cvScalar(255, 0, 0, 0), CV_FILLED, CV_AA, 0);
+        rectangle(img, pre_pt, cur_pt, cvScalar(0, 255, 0, 0), 1, 8, 0);
+        imshow(&quot;img&quot;, img);
+        img.copyTo(tmp);
+        int width = abs(pre_pt.x - cur_pt.x);
+        int height = abs(pre_pt.y - cur_pt.y);
+        if (width == 0 || height == 0)
+            return;
+        dst = Mat(cvSize(width, height), org.type());
+
+        if (pre_pt.x&lt;cur_pt.x &amp;&amp; pre_pt.y&lt;cur_pt.y)
+        {
+            rect = Rect(pre_pt.x, pre_pt.y, width, height);
+        }
+        else if (pre_pt.x&gt;cur_pt.x &amp;&amp; pre_pt.y&lt;cur_pt.y)
+        {
+            rect = Rect(cur_pt.x, pre_pt.y, width, height);
+        }
+        else if (pre_pt.x&gt;cur_pt.x &amp;&amp; pre_pt.y&gt;cur_pt.y)
+        {
+            rect = Rect(cur_pt.x, cur_pt.y, width, height);
+        }
+        else if (pre_pt.x&lt;cur_pt.x &amp;&amp; pre_pt.y&gt;cur_pt.y)
+        {
+            rect = Rect(pre_pt.x, cur_pt.y, width, height);
+        }
+        dst = Mat(img, rect);
+        cvNamedWindow(&quot;dst&quot;, 1);
+        imshow(&quot;dst&quot;, dst);
+        waitKey();
+    }
+}
+
+int main()
+{
+    org = imread(&quot;D:\\Source Code\\grabcut\\Grabcut\\a.jpg&quot;);
+    img = org.clone();
+    tmp = org.clone();
+    int a = org.at&lt;Vec3b&gt;(1, 1)[0];
+    cvNamedWindow(&quot;img&quot;, 1);
+    cvSetMouseCallback(&quot;img&quot;, on_mouse, 0);
+    imshow(&quot;dst&quot;, img);
+    cvWaitKey(0);
+}
+</code></pre></div>
     <nav class="article-previous fn-clear">
         
-        <a class="prev" href="/%E7%AE%97%E6%B3%95/2015/04/28/%E5%9B%BE%E4%BB%A5%E5%8F%8ADFS%E5%92%8CBFS.html" rel="bookmark">&laquo;&nbsp;图以及DFS和BFS</a>
+        <a class="prev" href="/%E7%A7%91%E7%A0%94/2015/06/23/%E6%9C%80%E5%A4%A7%E6%B5%81%E5%92%8C%E6%9C%80%E5%B0%8F%E5%89%B2%EF%BC%9AEdmonds_Karp%E7%AE%97%E6%B3%95.html" rel="bookmark">&laquo;&nbsp;最大流和最小割：Edmonds_Karp算法</a>
         
         
-        <a class="next" href="/%E7%94%9F%E6%B4%BB/2015/05/10/life.html" rel="bookmark">飞鸟集&nbsp;&raquo;</a>
+        <a class="next" href="/%E7%AE%97%E6%B3%95/2015/07/07/%E8%AE%A1%E7%AE%97%E6%9C%AA%E6%97%8B%E8%BD%AC2%E7%9F%A9%E5%BD%A2%E7%9B%B8%E4%BA%A4%E9%9D%A2%E7%A7%AF.html" rel="bookmark">计算未旋转2矩形相交面积&nbsp;&raquo;</a>
         
     </nav>
     <div class="comment">

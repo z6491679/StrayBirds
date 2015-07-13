@@ -12,7 +12,7 @@
         -->
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
         <meta charset="utf-8">
-        <title>Matlab的矩阵存储和opencv mat的区别 - Qilong Tech</title>
+        <title>计算未旋转2矩形相交面积 - Qilong Tech</title>
         <!-- meta -->
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
         <meta name="generator" content="Jekyll" />
@@ -137,24 +137,39 @@
                 <div class="main">
                     
     <div class="article article-post">
-    <h2 class="title">Matlab的矩阵存储和opencv mat的区别</h2>
+    <h2 class="title">计算未旋转2矩形相交面积</h2>
     <div class="info">
         <span class="info-title"><i class="icon-calendar"></i> Published: </span>
-        <span class="info-date">07 May 2015</span>
+        <span class="info-date">07 Jul 2015</span>
         <span class="info-title"><i class="icon-folder-open"></i> Category: </span>
-        <span class="info-link"><a href="/navigations/categories.html#科研-ref" >科研</a></span>
+        <span class="info-link"><a href="/navigations/categories.html#算法-ref" >算法</a></span>
     </div>
-    <p>在matlab中是按列存储的，其[x y]对应于opencv的为[纵坐标 横坐标]，所以对于opencv的Rect(int x,int y,int width,int height)结构而言，在matlab中应该是pos[y,x,height,width].
-一张宽720 长526的图片在matlab中为526<em>720.
-<img src="http://img.blog.csdn.net/20150507104358624" alt="这里写图片描述">
-总而言之：</em><em>matlab中第一个坐标代表的是长（纵轴、y），第二个坐标代表的是宽(横轴、x)</em>*</p>
+    <div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="kt">int</span> <span class="nf">find_intersect_area</span><span class="p">(</span><span class="n">Rect</span> <span class="n">a</span><span class="p">,</span> <span class="n">Rect</span> <span class="n">b</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">//(x11,y11)(x12,y12)为矩形a对角线上的端点</span>
+    <span class="c1">//(x21,y21)(x22,y22)为矩形b对角线上的端点</span>
+    <span class="kt">int</span> <span class="n">x11</span> <span class="o">=</span> <span class="n">a</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">x12</span> <span class="o">=</span> <span class="n">a</span><span class="p">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">a</span><span class="p">.</span><span class="n">width</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">y11</span> <span class="o">=</span> <span class="n">a</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">y12</span> <span class="o">=</span> <span class="n">a</span><span class="p">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">a</span><span class="p">.</span><span class="n">height</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">x21</span> <span class="o">=</span> <span class="n">b</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">x22</span> <span class="o">=</span> <span class="n">b</span><span class="p">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">b</span><span class="p">.</span><span class="n">width</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">y21</span> <span class="o">=</span> <span class="n">b</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">y22</span> <span class="o">=</span> <span class="n">b</span><span class="p">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">b</span><span class="p">.</span><span class="n">height</span><span class="p">;</span>
+    <span class="c1">//相交图形为矩形，x方向长度为min(x12,x22) - max(x11,x21)</span>
+    <span class="c1">//y方向长度为min(y12,y22) - max(y11,y21)</span>
+    <span class="c1">//若为负值则不相交</span>
+    <span class="kt">int</span> <span class="n">Lx</span> <span class="o">=</span> <span class="n">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">min</span><span class="p">(</span><span class="n">x12</span><span class="p">,</span> <span class="n">x22</span><span class="p">)</span> <span class="o">-</span> <span class="n">max</span><span class="p">(</span><span class="n">x11</span><span class="p">,</span> <span class="n">x21</span><span class="p">));</span>
+    <span class="kt">int</span> <span class="n">Ly</span> <span class="o">=</span> <span class="n">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">min</span><span class="p">(</span><span class="n">y12</span><span class="p">,</span> <span class="n">y22</span><span class="p">)</span> <span class="o">-</span> <span class="n">max</span><span class="p">(</span><span class="n">y11</span><span class="p">,</span> <span class="n">y21</span><span class="p">));</span>
+    <span class="k">return</span> <span class="n">Lx</span> <span class="o">*</span> <span class="n">Ly</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><img src="http://img.blog.csdn.net/20150707180956886" alt="这里写图片描述"></p>
 
     <nav class="article-previous fn-clear">
         
-        <a class="prev" href="/%E7%AE%97%E6%B3%95/2015/04/28/%E5%9B%BE%E4%BB%A5%E5%8F%8ADFS%E5%92%8CBFS.html" rel="bookmark">&laquo;&nbsp;图以及DFS和BFS</a>
+        <a class="prev" href="/%E7%AE%97%E6%B3%95/2015/06/24/opencv%E6%88%AA%E5%8F%96%E7%9F%A9%E5%BD%A2%E6%A1%86%E4%B8%AD%E7%9A%84%E5%9B%BE%E5%83%8F.html" rel="bookmark">&laquo;&nbsp;opencv截取矩形框中的图像</a>
         
-        
-        <a class="next" href="/%E7%94%9F%E6%B4%BB/2015/05/10/life.html" rel="bookmark">飞鸟集&nbsp;&raquo;</a>
         
     </nav>
     <div class="comment">

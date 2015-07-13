@@ -138,6 +138,43 @@
                     
 	
     <div class="article">
+        <h3 class="title"><a href="/%E7%A7%91%E7%A0%94/2015/04/05/sort%E7%AE%80%E5%8D%95%E5%88%86%E6%9E%90.html" title="sort简单分析">sort简单分析</a></h3>
+        <article class="rexp">
+            <p><p>排序算法分析（都以从小到大为例）：
+1、<strong>Insertsort:</strong>（原地排序）
+最坏情况：从大到小排列（逆序），6,5,4,3,2,1, 比较（移动次数要乘以3）次数=n*(n - 1) / 2;
+最好情况:从小到大排列（正序），1,2,3,4,5,6，比较次数 = n；
+平均情况：与最坏情况一样，为Θ（n^2）.
+算法稳定。</p>
+</p>
+        </article>
+        <a href="/%E7%A7%91%E7%A0%94/2015/04/05/sort%E7%AE%80%E5%8D%95%E5%88%86%E6%9E%90.html" class="more"><i class="icon-link"></i></a>
+        <div class="info">
+            <span class="info-title"><i class="icon-calendar"></i> Published: </span>
+            <span class="info-date">05 Apr 2015</span>
+             <span class="info-title"><i class="icon-folder-open"></i> Category: </span>
+            <span class="info-link"><a href="/navigations/categories.html#科研-ref" >科研</a></span>
+        </div>
+    </div>
+
+    <div class="article">
+        <h3 class="title"><a href="/%E7%A7%91%E7%A0%94/2015/04/05/opencv%20codebook%E5%AD%A6%E4%B9%A0.html" title="opencv codebook学习">opencv codebook学习</a></h3>
+        <article class="rexp">
+            <p><p>该算法对图像的每一个像素位置建立一个码本(codebook),每一个码本有多个码元（ce）多通道的，每一个码元都有自己的lowbound和upbound。在学习时候，对于每一张图片中的每一个像素，进行相应的码本匹配，如果像素值在码本中某码元的bound范围之内，那么只需要更新该码元的bound即可。如果在对应的码本中没有匹配的码元，那么证明背景是动态的，需要在此像素点的码本中建立新的码元。因此，在背景学习的过程中，每个像素点可以对应多个码元，这样就可以学到复杂的动态背景。
+1、学习过程
+2、检测过程</p>
+</p>
+        </article>
+        <a href="/%E7%A7%91%E7%A0%94/2015/04/05/opencv%20codebook%E5%AD%A6%E4%B9%A0.html" class="more"><i class="icon-link"></i></a>
+        <div class="info">
+            <span class="info-title"><i class="icon-calendar"></i> Published: </span>
+            <span class="info-date">05 Apr 2015</span>
+             <span class="info-title"><i class="icon-folder-open"></i> Category: </span>
+            <span class="info-link"><a href="/navigations/categories.html#科研-ref" >科研</a></span>
+        </div>
+    </div>
+
+    <div class="article">
         <h3 class="title"><a href="/%E6%8A%80%E6%9C%AF/2014/09/20/java-concurrency.html" title="Java 中的并发">Java 中的并发</a></h3>
         <article class="rexp">
             <p><h2>如何创建一个线程</h2>
@@ -192,6 +229,10 @@
                         <h4 class="title">Recent Posts</h4>
                         <ul class="list">
                             
+                                <li><a href="/%E7%AE%97%E6%B3%95/2015/07/07/%E8%AE%A1%E7%AE%97%E6%9C%AA%E6%97%8B%E8%BD%AC2%E7%9F%A9%E5%BD%A2%E7%9B%B8%E4%BA%A4%E9%9D%A2%E7%A7%AF.html" title="计算未旋转2矩形相交面积" rel="bookmark">计算未旋转2矩形相交面积</a></li>
+                            
+                                <li><a href="/%E7%AE%97%E6%B3%95/2015/06/24/opencv%E6%88%AA%E5%8F%96%E7%9F%A9%E5%BD%A2%E6%A1%86%E4%B8%AD%E7%9A%84%E5%9B%BE%E5%83%8F.html" title="opencv截取矩形框中的图像" rel="bookmark">opencv截取矩形框中的图像</a></li>
+                            
                                 <li><a href="/%E7%A7%91%E7%A0%94/2015/06/23/%E6%9C%80%E5%A4%A7%E6%B5%81%E5%92%8C%E6%9C%80%E5%B0%8F%E5%89%B2%EF%BC%9AEdmonds_Karp%E7%AE%97%E6%B3%95.html" title="最大流和最小割：Edmonds_Karp算法" rel="bookmark">最大流和最小割：Edmonds_Karp算法</a></li>
                             
                                 <li><a href="/%E7%AE%97%E6%B3%95/2015/06/23/Bellman-Ford%E7%AE%97%E6%B3%95%E5%92%8CDijkstra%E7%AE%97%E6%B3%95.html" title="Bellman-Ford算法和Dijkstra算法" rel="bookmark">Bellman-Ford算法和Dijkstra算法</a></li>
@@ -199,10 +240,6 @@
                                 <li><a href="/%E7%AE%97%E6%B3%95/2015/06/21/DFS%E5%BA%94%E7%94%A8%EF%BC%9A%E5%9B%BE%E7%9A%84%E6%8B%93%E6%89%91%E6%8E%92%E5%BA%8F%E4%BB%A5%E5%8F%8AKosaraju%E5%BC%BA%E8%BF%9E%E9%80%9A%E5%88%86%E9%87%8F%E7%AE%97%E6%B3%95.html" title="DFS应用：图的拓扑排序以及Kosaraju强连通分量算法" rel="bookmark">DFS应用：图的拓扑排序以及Kosaraju强连通分量算法</a></li>
                             
                                 <li><a href="/%E7%A7%91%E7%A0%94/2015/06/17/possion.html" title="Poisson Image Editing" rel="bookmark">Poisson Image Editing</a></li>
-                            
-                                <li><a href="/%E7%AE%97%E6%B3%95/2015/06/09/FLOYD%E7%AE%97%E6%B3%95.html" title="FLOYD算法" rel="bookmark">FLOYD算法</a></li>
-                            
-                                <li><a href="/%E7%A7%91%E7%A0%94/2015/05/13/c++%20matlab%E6%B7%B7%E5%90%88%E7%BC%96%E7%A8%8B%E6%97%B6mxArray%20%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2%E9%97%AE%E9%A2%98.html" title="c++ matlab混合编程时mxArray 内存泄露问题" rel="bookmark">c++ matlab混合编程时mxArray 内存泄露问题</a></li>
                             
                         </ul>
                     </div>
